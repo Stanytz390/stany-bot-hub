@@ -27,6 +27,8 @@ import manualReposRouter from "./routes/manual-repos.js";
 import apiKeysRouter from "./routes/api-keys.js";
 import publicApiRouter from "./routes/public-api.js";
 import smmRouter from "./routes/smm.js";
+import linkBotRouter from "./routes/linkbot.js";
+import websitesRouter from "./routes/websites.js";
 import { logger } from "./logger.js";
 import { BotTemplate } from "./models/BotTemplate.js";
 import { Bot } from "./models/Bot.js";
@@ -78,6 +80,8 @@ app.use("/api/notifications", notificationsRouter);
 app.use("/api/rewards", rewardsRouter);
 app.use("/api/manual-repos", manualReposRouter);
 app.use("/api/smm", smmRouter);
+app.use("/api/linkbot", linkBotRouter);
+app.use("/api/websites", websitesRouter);
 
 // ===== OG TAG HANDLER FOR BOT SHARING =====
 const CRAWLER_RE = /whatsapp|facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot|discord|googlebot|bingbot|curl|wget|python-requests/i;

@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ===== MIDNIGHT BLACK + ELECTRIC BLUE ===== */
+    --background: 222 40% 4%;
+    --foreground: 210 40% 98%;
+    --card: 222 34% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 38% 6%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 214 96% 58%;
+    --primary-foreground: 222 45% 6%;
+    --primary-glow: 199 95% 62%;
+
+    --secondary: 222 28% 13%;
+    --secondary-foreground: 210 36% 96%;
+    --muted: 222 24% 14%;
+    --muted-foreground: 214 18% 72%;
+
+    --accent: 330 85% 66%;
+    --accent-foreground: 222 45% 6%;
+
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 90% 62% / 0.16;
+    --input: 222 26% 16%;
+
+    --ring: 214 96% 60%;
+    --radius: 1rem;
+
+    --sidebar-background: 222 36% 6%;
+    --sidebar-foreground: 210 32% 92%;
+    --sidebar-primary: 214 96% 58%;
+    --sidebar-primary-foreground: 222 45% 6%;
+    --sidebar-accent: 222 28% 13%;
+    --sidebar-accent-foreground: 210 36% 96%;
+    --sidebar-border: 214 90% 62% / 0.14;
+    --sidebar-ring: 214 96% 60%;
+  }
+
+  .dark {
+    --background: 222 40% 4%;
+    --foreground: 210 40% 98%;
+    --card: 222 34% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 38% 6%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 214 96% 58%;
+    --primary-foreground: 222 45% 6%;
+    --primary-glow: 199 95% 62%;
+
+    --secondary: 222 28% 13%;
+    --secondary-foreground: 210 36% 96%;
+    --muted: 222 24% 14%;
+    --muted-foreground: 214 18% 72%;
+
+    --accent: 330 85% 66%;
+    --accent-foreground: 222 45% 6%;
+
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 90% 62% / 0.16;
+    --input: 222 26% 16%;
+
+    --ring: 214 96% 60%;
+
+    --sidebar-background: 222 36% 6%;
+    --sidebar-foreground: 210 32% 92%;
+    --sidebar-primary: 214 96% 58%;
+    --sidebar-primary-foreground: 222 45% 6%;
+    --sidebar-accent: 222 28% 13%;
+    --sidebar-accent-foreground: 210 36% 96%;
+    --sidebar-border: 214 90% 62% / 0.14;
+    --sidebar-ring: 214 96% 60%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* ===== WAVE HAND ===== */
+@keyframes wave-hand {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(18deg); }
+  35% { transform: rotate(-8deg); }
+  55% { transform: rotate(18deg); }
+  75% { transform: rotate(-4deg); }
+}
+
+.wave-emoji {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave-hand 2.5s ease-in-out infinite;
+}
+
+/* ===== PINK SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary-glow)));
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary)) hsl(var(--background));
+}
+
+/* ===== PINK GLOW ===== */
+.glow-pink {
+  box-shadow: 0 0 30px hsl(var(--primary) / .32), 0 0 70px hsl(var(--primary-glow) / .16);
+}
+
+/* ===== SOLID ACCENT CARD (no blur) ===== */
+.card-pink {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--primary) / .16);
+}
+
+
+/* ===== PINK BUTTON ===== */
+.btn-pink {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  box-shadow: 0 4px 20px hsl(var(--primary) / .3);
+  transition: all 0.3s ease;
+}
+.btn-pink:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 30px hsl(var(--primary) / .42);
+}
+
+/* ===== PREMIUM TYPOGRAPHY & POLISH ===== */
+@layer base {
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.005em; }
+  h1, h2, h3, h4, .font-display { font-family: Sora, "Plus Jakarta Sans", sans-serif; letter-spacing: -0.02em; }
+}
+
+@layer components {
+  /* Buttons get a subtle premium lift + shine */
+  button, .btn-premium {
+    transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease, filter .18s ease;
+  }
+  button:not(:disabled):hover { transform: translateY(-1px); }
+  button:not(:disabled):active { transform: translateY(0) scale(.98); }
+  .card-premium {
+    background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--card)) 100%);
+    border: 1px solid hsl(var(--primary) / .18);
+    box-shadow: 0 10px 40px -20px hsl(var(--primary) / .45);
+    border-radius: 1rem;
+  }
+  .text-gradient-premium {
+    background: linear-gradient(92deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .surface-glass {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / .16);
+    border-radius: 1.25rem;
+  }
+  .chip-premium {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-medium text-primary;
+  }
+}
+
+
+/* ===== SOLID SURFACE SYSTEM (no blur — kept crisp and readable) ===== */
+@layer components {
+  .glass-panel {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / .16);
+    box-shadow: 0 8px 28px -18px hsl(var(--primary) / .35);
+  }
+
+  .glass-card {
+    @apply rounded-2xl;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / .16);
+    box-shadow: 0 14px 40px -28px hsl(var(--primary) / .45);
+  }
+  .glass-bubble {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / .14);
+  }
+  .glass-input {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--primary) / .2);
+  }
+}
+

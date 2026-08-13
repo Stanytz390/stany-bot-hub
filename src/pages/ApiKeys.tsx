@@ -16,6 +16,43 @@ const ENDPOINTS = [
   { method: "GET", path: "/api/v1/bots/:id", cost: 1, desc: "One bot, including its live dyno status." },
   { method: "GET", path: "/api/v1/bots/:id/logs", cost: 2, desc: "Latest runtime logs for a bot." },
   { method: "POST", path: "/api/v1/bots/:id/restart", cost: 3, desc: "Restart a bot instantly." },
+  { method: "GET", path: "/api/v1/templates", cost: 0, desc: "Every bot you can deploy, with its SQ price. Free." },
+  { method: "POST", path: "/api/v1/deploy", cost: 3, desc: "Deploy a bot. Body: template_id, app_name, session, months." },
+  { method: "GET", path: "/api/v1/panels/plans", cost: 0, desc: "Panel server plans with RAM, disk, CPU and SQ price. Free." },
+  { method: "GET", path: "/api/v1/panels", cost: 1, desc: "Panel servers you already own." },
+  { method: "POST", path: "/api/v1/panels/order", cost: 3, desc: "Buy a panel. Body: plan_id. Credentials come back once." },
+  { method: "GET", path: "/api/v1/websites", cost: 1, desc: "Hosted websites, custom domains and DNS status." },
+  { method: "GET", path: "/api/v1/linkbots", cost: 1, desc: "Your linked WhatsApp bots and their protection settings." },
+  { method: "GET", path: "/api/v1/services", cost: 0, desc: "Social boosting catalogue. Query: q, category, platform. Free." },
+  { method: "POST", path: "/api/v1/services/order", cost: 2, desc: "Order boosting. Body: service_id, link, quantity." },
+  { method: "GET", path: "/api/v1/services/order/:id", cost: 0, desc: "Poll one boosting order until it completes. Free." },
+];
+
+const SERVICE_PARAMS = [
+  { name: "service_id", type: "number", required: true, desc: "Service ID from GET /v1/services." },
+  { name: "link", type: "string", required: true, desc: "Public URL of the profile, post or video." },
+  { name: "quantity", type: "number", required: true, desc: "Must sit between the service min and max." },
+  { name: "provider", type: "string", required: false, desc: "Only needed when the same ID exists on two providers." },
+];
+
+const SERVICE_FIELDS = [
+  { name: "order_id", desc: "STANY order ID — use it with GET /v1/services/order/:id." },
+  { name: "status", desc: "pending, processing, completed, partial, failed, refunded or canceled." },
+  { name: "start_count", desc: "Follower or view count recorded when the order started." },
+  { name: "remains", desc: "How much of the quantity is still being delivered." },
+  { name: "charged_sq", desc: "SQ deducted for this call, including the API fee." },
+  { name: "balance_after", desc: "Your SQ balance immediately after the call." },
+];
+
+const ERROR_CODES = [
+  { code: "400", desc: "Missing or invalid parameters — check service_id, link and quantity." },
+  { code: "401", desc: "Missing, malformed or unknown API key." },
+  { code: "402", desc: "Not enough SQ. Top up and the key works again instantly." },
+  { code: "403", desc: "Key disabled or account suspended." },
+  { code: "404", desc: "Service, template, plan or order not found." },
+  { code: "422", desc: "Quantity outside the service min/max range." },
+  { code: "429", desc: "Too many calls in a short window — slow down and retry." },
+  { code: "502", desc: "Upstream provider or Heroku refused. Any SQ charged is refunded automatically." },
 ];
 
 export function ApiKeys() {
@@ -229,6 +266,54 @@ export function ApiKeys() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+
+          {/* ===== SOCIAL BOOSTING DEEP DIVE ===== */}
+          <div className="mt-8 rounded-2xl border border-primary/15 bg-secondary/40 p-5">
+            <h3 className="text-sm font-bold text-foreground">Social boosting endpoints</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Browse the catalogue for free, order with SQ, then poll the order until it completes.
+            </p>
+
+            <pre className="mt-3 overflow-x-auto rounded-xl bg-card p-4 text-[11px] text-foreground">{`curl -H "x-api-key: STANY-xxxxxxxxxxxx" \\
+  "${origin}/api/v1/services?q=instagram&category=Followers"
+
+curl -X POST -H "x-api-key: STANY-xxxxxxxxxxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{"service_id":1234,"link":"https://instagram.com/handle","quantity":1000}' \\
+  ${origin}/api/v1/services/order`}</pre>
+
+            <h4 className="mt-5 text-xs font-bold uppercase tracking-wide text-muted-foreground">Order parameters</h4>
+            <div className="mt-2 space-y-1.5">
+              {SERVICE_PARAMS.map((p) => (
+                <div key={p.name} className="rounded-xl bg-card px-3 py-2 text-xs">
+                  <span className="font-mono text-primary">{p.name}</span>
+                  <span className="ml-2 text-muted-foreground">{p.type}{p.required ? " · required" : " · optional"}</span>
+                  <p className="mt-0.5 text-muted-foreground">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <h4 className="mt-5 text-xs font-bold uppercase tracking-wide text-muted-foreground">Response fields</h4>
+            <div className="mt-2 space-y-1.5">
+              {SERVICE_FIELDS.map((f) => (
+                <div key={f.name} className="rounded-xl bg-card px-3 py-2 text-xs">
+                  <span className="font-mono text-primary">{f.name}</span>
+                  <p className="mt-0.5 text-muted-foreground">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <h4 className="mt-5 text-xs font-bold uppercase tracking-wide text-muted-foreground">Error codes</h4>
+            <div className="mt-2 space-y-1.5">
+              {ERROR_CODES.map((e) => (
+                <div key={e.code} className="flex gap-3 rounded-xl bg-card px-3 py-2 text-xs">
+                  <span className="font-mono font-bold text-primary">{e.code}</span>
+                  <span className="text-muted-foreground">{e.desc}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <ul className="mt-5 space-y-1.5 text-xs text-muted-foreground">

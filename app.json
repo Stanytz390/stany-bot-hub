@@ -1,9 +1,9 @@
 {
   "name": "Stany Hosting",
-  "description": "Stany Hosting — WhatsApp Bot & Panel Hosting with SQ Coins, PeterPay (Tanzania), PayPal, Bitcoin and MiniPay",
-  "repository": "https://github.com/Stanytz390/hosting.stanymines.site",
+  "description": "Stany Hosting — WhatsApp Bot & Panel Hosting with SQ Coins, PayPal, Bitcoin and MiniPay",
+  "repository": "https://github.com/Stanytz390/stany-bot-hub",
   "logo": "https://www.image2url.com/r2/default/images/1785618177825-5b3fb0ba-cb13-44e3-8010-43af4a311fd4.jpg",
-  "keywords": ["whatsapp", "bot", "hosting", "pterodactyl", "panel", "tanzania", "peterpay"],
+  "keywords": ["whatsapp", "bot", "hosting", "pterodactyl", "panel", "tanzania"],
   "stack": "heroku-24",
   "buildpacks": [{ "url": "heroku/nodejs" }],
   "env": {
@@ -55,19 +55,6 @@
       "description": "Your Telegram user ID to receive bot notifications",
       "required": false
     },
-    "PETERPAY_API_KEY": {
-      "description": "PeterPay API key for Tanzania mobile money (https://ap.peterpay.link/Documentation)",
-      "required": true
-    },
-    "PETERPAY_API_URL": {
-      "description": "PeterPay API base URL",
-      "value": "https://api.peterpay.link/api/v1",
-      "required": true
-    },
-    "PETERPAY_WEBHOOK_SECRET": {
-      "description": "Shared secret used to verify PeterPay webhook signatures",
-      "required": false
-    },
     "SQ_RATE": {
       "description": "Exchange rate: 1 SQ = TSh",
       "value": "100",
@@ -92,13 +79,57 @@
       "description": "Bitcoin address for crypto top-ups",
       "required": false
     },
-    "SMTP_HOST": { "description": "SMTP host for 6-digit email verification codes", "required": false },
-    "SMTP_PORT": { "description": "SMTP port", "value": "465", "required": false },
-    "SMTP_USER": { "description": "SMTP username", "required": false },
-    "SMTP_PASS": { "description": "SMTP password", "required": false },
-    "GITHUB_CLIENT_ID": { "description": "GitHub OAuth client ID for login with GitHub", "required": false },
-    "GITHUB_CLIENT_SECRET": { "description": "GitHub OAuth client secret", "required": false },
-    "PANEL_DOMAIN": { "description": "Pterodactyl panel domain", "value": "https://panel.stanymaxhub.online", "required": false },
-    "PANEL_API_KEY": { "description": "Pterodactyl application API key", "required": false }
+    "SMTP_HOST": {
+      "description": "SMTP host for 6-digit email verification codes",
+      "required": false
+    },
+    "SMTP_PORT": {
+      "description": "SMTP port",
+      "value": "465",
+      "required": false
+    },
+    "SMTP_USER": {
+      "description": "SMTP username",
+      "required": false
+    },
+    "SMTP_PASS": {
+      "description": "SMTP password",
+      "required": false
+    },
+    "GITHUB_CLIENT_ID": {
+      "description": "GitHub OAuth client ID for login with GitHub",
+      "required": false
+    },
+    "GITHUB_CLIENT_SECRET": {
+      "description": "GitHub OAuth client secret",
+      "required": false
+    },
+    "PANEL_DOMAIN": {
+      "description": "Pterodactyl panel domain",
+      "value": "https://panel.stanymaxhub.online",
+      "required": false
+    },
+    "PANEL_API_KEY": {
+      "description": "Pterodactyl application API key",
+      "required": false
+    },
+    "SONIC_PESA_API_KEY": {
+      "description": "Sonic API key for payment processing",
+      "required": true
+    },
+    "SONIC_PESA_API_SECRET": {
+      "description": "Sonic API secret for payment processing",
+      "required": true
+    },
+    "SMM_API_URL": {
+      "description": "SMM API base URL",
+      "value": "",
+      "required": false
+    },
+    "SMM_API_KEY": {
+      "description": "SMM API key",
+      "value": "",
+      "required": false
+    }
   }
 }

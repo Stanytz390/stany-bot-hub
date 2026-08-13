@@ -399,11 +399,18 @@ export function Dashboard() {
     { label: "Docs", icon: BookOpen, path: "/docs" },
     { label: "Tutorials", icon: Youtube, path: "/tutorials" },
     { label: "Community", icon: Users, path: "/community" },
+    { label: "Social Boosting", icon: TrendingUp, path: "/smm" },
+    { label: "My SMM Orders", icon: ListOrdered, path: "/smm/orders" },
+    { label: "My Link Bot", icon: Bot, path: "/linkbot" },
+    { label: "Website Hosting", icon: Globe, path: "/hosting" },
     ...(isStaff ? [{ label: "Staff Panel", icon: Server, path: "/staff" }] : []),
   ];
 
   const quickActions = [
     { label: "Deploy Bot", icon: Rocket, path: "/services/bots", color: "pink" },
+    { label: "Boost Social", icon: TrendingUp, path: "/smm", color: "pink" },
+    { label: "My Link Bot", icon: Bot, path: "/linkbot", color: "purple" },
+    { label: "Host Website", icon: Globe, path: "/hosting", color: "blue" },
     { label: "Buy Panel", icon: Server, path: "/services/panels", color: "blue" },
     { label: "Top Up", icon: Coins, path: "/topup", color: "green" },
     { label: "Community", icon: Users, path: "/community", color: "purple" },

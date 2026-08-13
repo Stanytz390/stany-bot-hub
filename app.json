@@ -1,0 +1,104 @@
+{
+  "name": "Stany Hosting",
+  "description": "Stany Hosting — WhatsApp Bot & Panel Hosting with SQ Coins, PeterPay (Tanzania), PayPal, Bitcoin and MiniPay",
+  "repository": "https://github.com/Stanytz390/hosting.stanymines.site",
+  "logo": "https://www.image2url.com/r2/default/images/1785618177825-5b3fb0ba-cb13-44e3-8010-43af4a311fd4.jpg",
+  "keywords": ["whatsapp", "bot", "hosting", "pterodactyl", "panel", "tanzania", "peterpay"],
+  "stack": "heroku-24",
+  "buildpacks": [{ "url": "heroku/nodejs" }],
+  "env": {
+    "MONGODB_URI": {
+      "description": "MongoDB Atlas connection string",
+      "required": true
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT signing",
+      "generator": "secret",
+      "required": true
+    },
+    "SESSION_SECRET": {
+      "description": "Secret for cookie sessions",
+      "generator": "secret",
+      "required": true
+    },
+    "HEROKU_API_KEY": {
+      "description": "API key for deploying bots",
+      "required": true
+    },
+    "ADMIN_USERNAME": {
+      "description": "Admin dashboard username",
+      "required": true
+    },
+    "ADMIN_PASSWORD": {
+      "description": "Admin dashboard password",
+      "required": true
+    },
+    "OWNER_EMAIL": {
+      "description": "Super admin email that can change user roles",
+      "value": "stanytzhosting@gmail.com",
+      "required": false
+    },
+    "APP_URL": {
+      "description": "Public URL of this app",
+      "value": "https://host.stanymaxhub.online",
+      "required": true
+    },
+    "IMAGE_URL": {
+      "description": "Logo image URL shown in the app header and branding areas",
+      "value": "https://www.image2url.com/r2/default/images/1785618177825-5b3fb0ba-cb13-44e3-8010-43af4a311fd4.jpg"
+    },
+    "BOT_TOKEN": {
+      "description": "Telegram bot token for admin notifications",
+      "required": false
+    },
+    "BOT_OWNER_ID": {
+      "description": "Your Telegram user ID to receive bot notifications",
+      "required": false
+    },
+    "PETERPAY_API_KEY": {
+      "description": "PeterPay API key for Tanzania mobile money (https://ap.peterpay.link/Documentation)",
+      "required": true
+    },
+    "PETERPAY_API_URL": {
+      "description": "PeterPay API base URL",
+      "value": "https://api.peterpay.link/api/v1",
+      "required": true
+    },
+    "PETERPAY_WEBHOOK_SECRET": {
+      "description": "Shared secret used to verify PeterPay webhook signatures",
+      "required": false
+    },
+    "SQ_RATE": {
+      "description": "Exchange rate: 1 SQ = TSh",
+      "value": "100",
+      "required": true
+    },
+    "PAYPAL_EMAIL": {
+      "description": "PayPal email for international manual top-ups",
+      "value": "masanyiwastanley378@gmail.com",
+      "required": false
+    },
+    "MINIPAY_NUMBER": {
+      "description": "MiniPay phone number for international payments",
+      "value": "255787069580",
+      "required": true
+    },
+    "MINIPAY_NAME": {
+      "description": "MiniPay account name for international payments",
+      "value": "Masanyiwa Stanley",
+      "required": true
+    },
+    "BTC_ADDRESS": {
+      "description": "Bitcoin address for crypto top-ups",
+      "required": false
+    },
+    "SMTP_HOST": { "description": "SMTP host for 6-digit email verification codes", "required": false },
+    "SMTP_PORT": { "description": "SMTP port", "value": "465", "required": false },
+    "SMTP_USER": { "description": "SMTP username", "required": false },
+    "SMTP_PASS": { "description": "SMTP password", "required": false },
+    "GITHUB_CLIENT_ID": { "description": "GitHub OAuth client ID for login with GitHub", "required": false },
+    "GITHUB_CLIENT_SECRET": { "description": "GitHub OAuth client secret", "required": false },
+    "PANEL_DOMAIN": { "description": "Pterodactyl panel domain", "value": "https://panel.stanymaxhub.online", "required": false },
+    "PANEL_API_KEY": { "description": "Pterodactyl application API key", "required": false }
+  }
+}

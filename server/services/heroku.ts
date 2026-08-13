@@ -132,3 +132,37 @@ export async function getConfigVars(appName: string): Promise<Record<string, str
     } catch { return []; }
   }
   
+  /** Deploy any tarball source as a plain web app (used for website hosting). */
+  export async function deployWebsiteApp(appName: string, sourceUrl: string, env: Record<string, string> = {}): Promise<{ success: boolean; setupId?: string }> {
+    const res = await fetch("https://api.heroku.com/app-setups", {
+      method: "POST",
+      headers: herokuHeaders,
+      body: JSON.stringify({
+        app: { name: appName },
+        source_blob: { url: sourceUrl },
+        overrides: { env }
+      })
+    });
+    if (!res.ok) return { success: false };
+    const data = await res.json() as { id?: string };
+    return { success: true, setupId: data.id };
+  }
+
+  /** Attach a custom domain and return the CNAME target the user must set. */
+  export async function addCustomDomain(appName: string, hostname: string): Promise<{ hostname: string; cname: string; status: string } | null> {
+    const res = await fetch(`https://api.heroku.com/apps/${appName}/domains`, {
+      method: "POST",
+      headers: herokuHeaders,
+      body: JSON.stringify({ hostname, sni_endpoint: null })
+    });
+    if (!res.ok) return null;
+    const d = await res.json() as { hostname?: string; cname?: string; status?: string };
+    return { hostname: d.hostname || hostname, cname: d.cname || "", status: d.status || "pending" };
+  }
+
+  export async function listCustomDomains(appName: string): Promise<{ hostname: string; cname: string; status: string }[]> {
+    const res = await fetch(`https://api.heroku.com/apps/${appName}/domains`, { headers: herokuHeaders });
+    if (!res.ok) return [];
+    const rows = await res.json() as Array<{ hostname?: string; cname?: string; status?: string }>;
+    return rows.map(r => ({ hostname: r.hostname || "", cname: r.cname || "", status: r.status || "pending" }));
+  }

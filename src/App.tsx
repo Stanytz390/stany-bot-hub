@@ -36,6 +36,10 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from
   import { AppSettingsProvider } from "@/hooks/useAppSettings";
   import { ChannelPopup } from "@/components/ChannelPopup";
   import { DeployRepo } from "@/pages/DeployRepo";
+  import SmmBoost from "@/pages/SmmBoost";
+  import MySmmOrders from "@/pages/MySmmOrders";
+  import LinkBotPage from "@/pages/LinkBotPage";
+  import WebHosting from "@/pages/WebHosting";
   import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
   interface NavLoadingContextType {
@@ -113,6 +117,10 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from
           <Route path="/services/panels/mypanels" element={<MyPanels />} />
           <Route path="/services/panels/purchasepanel" element={<PurchasePanels />} />
           <Route path="/mybots" element={<MyBots />} />
+          <Route path="/smm" element={<SmmBoost />} />
+          <Route path="/smm/orders" element={<MySmmOrders />} />
+          <Route path="/linkbot" element={<LinkBotPage />} />
+          <Route path="/hosting" element={<WebHosting />} />
           <Route path="/mypanels" element={<MyPanels />} />
           <Route path="/tutorials" element={<Tutorials />} />
           <Route path="/contact" element={<Contact />} />

@@ -125,7 +125,7 @@ function QuickActionCard({
     blue: "from-blue-500/20 to-blue-600/5 border-blue-500/30 hover:border-blue-500/50 shadow-blue-500/10 hover:shadow-blue-500/25",
     green: "from-green-500/20 to-green-600/5 border-green-500/30 hover:border-green-500/50 shadow-green-500/10 hover:shadow-green-500/25",
     purple: "from-primary/20 to-primary/5 border-primary/30 hover:border-primary/50 shadow-primary/10 hover:shadow-primary/25",
-    amber: "from-amber-500/20 to-amber-600/5 border-amber-500/30 hover:border-amber-500/50 shadow-amber-500/10 hover:shadow-amber-500/25",
+    rose: "from-rose-500/20 to-rose-600/5 border-rose-500/30 hover:border-rose-500/50 shadow-rose-500/10 hover:shadow-rose-500/25",
   };
 
   const iconColors: Record<string, string> = {
@@ -133,7 +133,7 @@ function QuickActionCard({
     blue: "from-blue-500/30 to-blue-600/20 border-blue-500/30 text-blue-400",
     green: "from-green-500/30 to-green-600/20 border-green-500/30 text-green-400",
     purple: "from-primary/30 to-primary/20 border-primary/30 text-primary",
-    amber: "from-amber-500/30 to-amber-600/20 border-amber-500/30 text-amber-400",
+    rose: "from-rose-500/30 to-rose-600/20 border-rose-500/30 text-rose-400",
   };
 
   return (
@@ -188,7 +188,7 @@ function StatCard({
     blue: "from-blue-500/20 to-blue-600/5 border-blue-500/20 text-blue-400",
     green: "from-green-500/20 to-green-600/5 border-green-500/20 text-green-400",
     purple: "from-primary/20 to-primary/5 border-primary/20 text-primary",
-    amber: "from-amber-500/20 to-amber-600/5 border-amber-500/20 text-amber-400",
+    rose: "from-rose-500/20 to-rose-600/5 border-rose-500/20 text-rose-400",
   };
 
   const iconColors: Record<string, string> = {
@@ -196,7 +196,7 @@ function StatCard({
     blue: "bg-blue-500/20 text-blue-400",
     green: "bg-green-500/20 text-green-400",
     purple: "bg-primary/20 text-primary",
-    amber: "bg-amber-500/20 text-amber-400",
+    rose: "bg-rose-500/20 text-rose-400",
   };
 
   const bgClass = gradient
@@ -644,7 +644,7 @@ export function Dashboard() {
             {isAdmin && (
               <button
                 onClick={() => { navigateWithLoader("/admin"); setNavOpen(false); }}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-amber-400 hover:bg-amber-500/10 transition-all duration-300 group"
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all duration-300 group"
               >
                 <div className="flex items-center gap-3">
                   <Shield className="w-4 h-4" />
@@ -853,20 +853,20 @@ export function Dashboard() {
         ).map(b => {
           const daysLeft = Math.ceil((new Date(b.expiresAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000));
           return (
-            <div key={b._id + "-expiry"} className="mb-4 p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 to-amber-600/5 flex items-center gap-4 animate-slide-up backdrop-blur-sm shadow-lg shadow-amber-500/10">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
-                <Clock className="w-6 h-6 text-amber-400" />
+            <div key={b._id + "-expiry"} className="mb-4 p-5 rounded-2xl border border-rose-500/30 bg-gradient-to-r from-rose-500/10 to-rose-600/5 flex items-center gap-4 animate-slide-up backdrop-blur-sm shadow-lg shadow-rose-500/10">
+              <div className="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center border border-rose-500/30">
+                <Clock className="w-6 h-6 text-rose-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-amber-300">Bot expiring soon</p>
-                <p className="text-xs text-amber-400/80 mt-1">
-                  <span className="font-mono bg-amber-500/15 px-2 py-1 rounded-md border border-amber-500/20">{b.herokuAppName}</span>
-                  {" "}expires in <span className="font-bold text-amber-300">{daysLeft}</span> day{daysLeft !== 1 ? "s" : ""}
+                <p className="text-sm font-bold text-rose-300">Bot expiring soon</p>
+                <p className="text-xs text-rose-400/80 mt-1">
+                  <span className="font-mono bg-rose-500/15 px-2 py-1 rounded-md border border-rose-500/20">{b.herokuAppName}</span>
+                  {" "}expires in <span className="font-bold text-rose-300">{daysLeft}</span> day{daysLeft !== 1 ? "s" : ""}
                 </p>
               </div>
               <button
                 onClick={() => navigateWithLoader("/mybots")}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/10 hover:from-amber-500/30 hover:to-amber-600/20 text-amber-300 text-xs font-bold transition-all duration-300 shrink-0 border border-amber-500/30 hover:scale-105 shadow-lg shadow-amber-500/20"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500/20 to-rose-600/10 hover:from-rose-500/30 hover:to-rose-600/20 text-rose-300 text-xs font-bold transition-all duration-300 shrink-0 border border-rose-500/30 hover:scale-105 shadow-lg shadow-rose-500/20"
               >
                 Renew Now
               </button>
@@ -1064,7 +1064,7 @@ export function Dashboard() {
                     ? <CreditCard className="w-4 h-4 text-green-400" />
                     : t.type === "panel"
                       ? <Server className="w-4 h-4 text-primary" />
-                      : <Coins className={`w-4 h-4 ${isCredit ? "text-amber-400" : "text-pink-400"}`} />;
+                      : <Coins className={`w-4 h-4 ${isCredit ? "text-rose-400" : "text-pink-400"}`} />;
                 return (
                   <div
                     key={t._id}
@@ -1099,7 +1099,7 @@ export function Dashboard() {
                         {isCredit ? "+" : "-"}{Math.abs(t.txAmount)} SQ
                       </span>
                       {isPending && (
-                        <span className="text-[10px] font-bold text-yellow-500 animate-pulse uppercase tracking-wide">pending</span>
+                        <span className="text-[10px] font-bold text-rose-500 animate-pulse uppercase tracking-wide">pending</span>
                       )}
                       {isFailed && (
                         <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">failed</span>

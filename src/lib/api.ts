@@ -1416,3 +1416,192 @@ export async function validateCoupon(code: string) {
   const res = await fetchWithAuth(`/coupons/validate/${encodeURIComponent(code)}`);
   return res.json();
 }
+
+// ============================================================
+// SOCIAL MEDIA BOOSTING (SMM)
+// ============================================================
+
+export interface SmmServiceRow {
+  _id: string;
+  serviceId: number;
+  provider: string;
+  name: string;
+  category: string;
+  platform?: string;
+  pricePer1000Sq: number;
+  min: number;
+  max: number;
+  description?: string;
+}
+
+export interface SmmOrderRow {
+  _id: string;
+  serviceId: number;
+  provider: string;
+  serviceName: string;
+  link: string;
+  quantity: number;
+  priceSq: number;
+  status: "pending" | "processing" | "completed" | "partial" | "failed" | "refunded" | "canceled";
+  remoteOrderId?: string;
+  startCount?: number;
+  remains?: number;
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getSmmServices(params: { q?: string; category?: string } = {}): Promise<SmmServiceRow[]> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set("q", params.q);
+  if (params.category) qs.set("category", params.category);
+  const res = await fetch(`${API_URL}/smm/services?${qs.toString()}`);
+  const data = await res.json();
+  return data.services || [];
+}
+
+export async function getSmmCategories(): Promise<string[]> {
+  const res = await fetch(`${API_URL}/smm/categories`);
+  const data = await res.json();
+  return data.categories || [];
+}
+
+export async function placeSmmOrder(input: { serviceId: number; provider?: string; link: string; quantity: number }) {
+  const res = await fetchWithAuth("/smm/orders", { method: "POST", body: JSON.stringify(input) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Could not place the order");
+  return data as { ok: true; order: Record<string, unknown>; charged: number; balance: number };
+}
+
+export async function getSmmOrders(): Promise<SmmOrderRow[]> {
+  const res = await fetchWithAuth("/smm/orders");
+  const data = await res.json();
+  return data.orders || [];
+}
+
+export async function getSmmOrder(id: string): Promise<SmmOrderRow> {
+  const res = await fetchWithAuth(`/smm/orders/${id}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Order not found");
+  return data.order;
+}
+
+// ============================================================
+// LINKED WHATSAPP BOT (10 SQ)
+// ============================================================
+
+export interface LinkBotRow {
+  _id: string;
+  code: string;
+  username: string;
+  displayName: string;
+  logoUrl: string;
+  phoneNumber: string;
+  channelJid: string;
+  autoFollowChannel: boolean;
+  autoReactChannel: boolean;
+  antilink: boolean;
+  antilinkAction: "warn" | "delete" | "kick";
+  antiStatusMention: boolean;
+  antiMention: boolean;
+  prefix: string;
+  menuFooter: string;
+  status: "pending" | "linked" | "paused";
+  priceSq: number;
+  createdAt: string;
+}
+
+export interface LinkBotCommand {
+  name: string;
+  category: string;
+  description: string;
+  usage?: string;
+  adminOnly?: boolean;
+}
+
+export async function getLinkBotCommands(): Promise<{ total: number; categories: string[]; commands: LinkBotCommand[] }> {
+  const res = await fetch(`${API_URL}/linkbot/commands`);
+  return res.json();
+}
+
+export async function getMyLinkBots(): Promise<{ bots: LinkBotRow[]; priceSq: number }> {
+  const res = await fetchWithAuth("/linkbot/my");
+  const data = await res.json();
+  return { bots: data.bots || [], priceSq: data.priceSq ?? 10 };
+}
+
+export async function createLinkBot(input: { username: string; displayName?: string; logoUrl?: string; phoneNumber?: string; channelJid?: string }) {
+  const res = await fetchWithAuth("/linkbot", { method: "POST", body: JSON.stringify(input) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Could not create the bot");
+  return data as { ok: true; bot: LinkBotRow; charged: number; balance: number };
+}
+
+export async function updateLinkBot(id: string, patch: Partial<LinkBotRow>) {
+  const res = await fetchWithAuth(`/linkbot/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Could not save settings");
+  return data.bot as LinkBotRow;
+}
+
+export async function deleteLinkBot(id: string) {
+  await fetchWithAuth(`/linkbot/${id}`, { method: "DELETE" });
+}
+
+export async function getLinkBotMenu(id: string): Promise<{ menu: string; logoUrl: string; bots: { name: string; slug: string; priceSq: number }[] }> {
+  const res = await fetchWithAuth(`/linkbot/${id}/menu`);
+  return res.json();
+}
+
+// ============================================================
+// WEBSITE HOSTING + CUSTOM DOMAIN
+// ============================================================
+
+export interface WebsiteRow {
+  _id: string;
+  appName: string;
+  sourceUrl: string;
+  herokuUrl: string;
+  customDomain: string;
+  dnsTarget: string;
+  domainStatus: "none" | "pending" | "active" | "failed";
+  status: "deploying" | "running" | "stopped" | "failed";
+  priceSq: number;
+  createdAt: string;
+}
+
+export async function getMyWebsites(): Promise<{ sites: WebsiteRow[]; pricing: { websiteSq: number; domainSq: number } }> {
+  const res = await fetchWithAuth("/websites/my");
+  const data = await res.json();
+  return { sites: data.sites || [], pricing: data.pricing || { websiteSq: 50, domainSq: 20 } };
+}
+
+export async function createWebsite(input: { appName: string; sourceUrl: string }) {
+  const res = await fetchWithAuth("/websites", { method: "POST", body: JSON.stringify(input) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Could not deploy the website");
+  return data.site as WebsiteRow;
+}
+
+export async function getWebsiteStatus(id: string): Promise<WebsiteRow> {
+  const res = await fetchWithAuth(`/websites/${id}/status`);
+  const data = await res.json();
+  return data.site;
+}
+
+export async function attachDomain(id: string, domain: string): Promise<WebsiteRow> {
+  const res = await fetchWithAuth(`/websites/${id}/domain`, { method: "POST", body: JSON.stringify({ domain }) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Could not attach the domain");
+  return data.site;
+}
+
+export async function checkDomain(id: string): Promise<WebsiteRow> {
+  const res = await fetchWithAuth(`/websites/${id}/domain`);
+  const data = await res.json();
+  return data.site;
+}
+
+export async function deleteWebsite(id: string) {
+  await fetchWithAuth(`/websites/${id}`, { method: "DELETE" });
+}

@@ -17,7 +17,7 @@ import {
   Loader2, RefreshCw, Bot, AlertTriangle, Menu, X,
   LayoutDashboard, BookOpen, UserCircle, CreditCard,
   MessageCircle, ChevronRight, Moon, Sun, Server,
-  Youtube, Sparkles, Zap, Rocket, Heart, TrendingUp,
+  Youtube, Sparkles, Zap, Rocket, Heart, TrendingUp, Globe, ListOrdered,
   Activity, ArrowUpRight, Settings, Check
 } from "lucide-react";
 import { TechBackground } from "@/components/TechBackground";

@@ -8,11 +8,8 @@ import { logger } from "../logger.js";
  *   Base URL: https://xmdapis.bwmxmd.co.ke/api
  *   Auth:     Authorization: Bearer bwm_live_xxxxxxxx
  *
- * IMPORTANT: The BWM XMD system uses "XD" as its internal currency.
- * Your main application uses "SQ" coins. This adapter simply relays the
- * `charged_xd` and `balance_after` values from BWM. Your business logic
- * (e.g., order service) should convert XD ⇄ SQ using your own exchange rate
- * if needed, or treat them as separate balances.
+ * IMPORTANT: BWM XMD uses "XD" internally. This adapter returns raw XD values.
+ * The routes file converts XD to SQ using SMM_XD_TO_SQ_RATE.
  * ============================================================================
  */
 
@@ -23,8 +20,8 @@ const API_KEY = process.env.SMM_API_KEY || "";
 interface BwmResponse<T> {
   success: boolean;
   data: T;
-  balance_after?: number;   // XD remaining
-  charged_xd?: number;      // XD deducted
+  balance_after?: number; // XD remaining
+  charged_xd?: number; // XD deducted
   error?: string;
 }
 
@@ -33,7 +30,7 @@ export interface RemoteService {
   id: number;
   name: string;
   category: string;
-  provider: string;              // "px1", "px2", "px3" (REQUIRED for orders)
+  provider: string; // "px1", "px2", "px3" (REQUIRED for orders)
   price_per_1000_xd: number;
   price_per_1000_ksh: number;
   price_per_1000_local: number;
@@ -46,7 +43,7 @@ export interface RemoteService {
 
 export interface RemoteOrderResult {
   order_id: number;
-  status: string;                // pending, processing, completed, partial, failed, refunded
+  status: string; // pending, processing, completed, partial, failed, refunded
   service_id: number;
   provider: string;
   link: string;
@@ -60,7 +57,7 @@ export interface RemoteOrderStatus {
   link: string;
   quantity: number;
   price_xd: number;
-  status: string;                // pending, processing, completed, partial, failed, refunded
+  status: string; // pending, processing, completed, partial, failed, refunded
 }
 
 // ---- Helpers ----

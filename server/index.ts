@@ -96,7 +96,7 @@ app.get(["/services/bots/:slug", "/services/bots/:slug/*"], async (req, res, nex
     const imageUrl = (template as unknown as { imageUrl?: string }).imageUrl || "https://url.bmbxmd.workers.dev/utamu.jpeg";
     const host = req.get("host") || "hosting.stanymaxhub.online";
     const url = `https://${host}/services/bots/${req.params.slug}`;
-    const title = `${name} — Deploy on Stany Host`;
+    const title = `${name}  Deploy on Stany Host`;
     const desc = `Deploy ${name} bot instantly on Stany Host. Fast, reliable WhatsApp bot hosting in seconds.`;
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.send(`<!DOCTYPE html><html lang="en"><head>

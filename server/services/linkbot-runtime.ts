@@ -1,29 +1,57 @@
 import makeWASocket, {
-  useMultiFileAuthState,
   DisconnectReason,
+  useMultiFileAuthState,
 } from "@whiskeysockets/baileys";
 import pino from "pino";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { LinkBot } from "../models/LinkBot.js";
 
+type WhatsAppSocket = ReturnType<typeof makeWASocket>;
+
 const AUTH_DIR = path.resolve(
   process.env.LINKBOT_AUTH_DIR || "./data/linkbot-auth"
 );
 
-const sockets = new Map<string, any>();
+const sockets = new Map<string, WhatsAppSocket>();
 const pairingCodes = new Map<string, string>();
-const connecting = new Set<string>();
+const connectionStates = new Map<string, boolean>();
+const pendingConnections = new Set<string>();
 
+function normalizePhoneNumber(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+function getAuthPath(botId: string): string {
+  return path.join(AUTH_DIR, botId);
+}
+
+async function updateBotStatus(
+  botId: string,
+  status: "pending" | "linked" | "paused"
+): Promise<void> {
+  await LinkBot.findByIdAndUpdate(botId, {
+    $set: {
+      status,
+      updatedAt: new Date(),
+      ...(status === "linked" ? { lastSeenAt: new Date() } : {}),
+    },
+  });
+}
+
+/**
+ * Request a WhatsApp pairing code.
+ * This function never charges SQ.
+ */
 export async function requestLinkBotPairingCode(
   botId: string,
   phoneNumber: string
 ): Promise<string> {
-  const number = phoneNumber.replace(/\D/g, "");
+  const number = normalizePhoneNumber(phoneNumber);
 
   if (!/^\d{10,15}$/.test(number)) {
     throw new Error(
-      "Enter a valid phone number with country code, using digits only."
+      "Enter a valid phone number with its country calling code."
     );
   }
 
@@ -33,21 +61,24 @@ export async function requestLinkBotPairingCode(
     throw new Error("Bot not found.");
   }
 
-  const existingSocket = sockets.get(botId);
+  const currentSocket = sockets.get(botId);
 
-  if (existingSocket?.user) {
+  if (currentSocket?.user) {
     throw new Error("This bot is already connected to WhatsApp.");
   }
 
-  if (connecting.has(botId)) {
-    throw new Error("A connection attempt is already in progress.");
+  if (pendingConnections.has(botId)) {
+    throw new Error(
+      "A pairing request is already running. Please wait."
+    );
   }
 
-  connecting.add(botId);
+  pendingConnections.add(botId);
 
   try {
-    const authPath = path.join(AUTH_DIR, botId);
+    await fs.mkdir(AUTH_DIR, { recursive: true });
 
+    const authPath = getAuthPath(botId);
     await fs.mkdir(authPath, { recursive: true });
 
     const { state, saveCreds } =
@@ -55,7 +86,7 @@ export async function requestLinkBotPairingCode(
 
     if (state.creds.registered) {
       throw new Error(
-        "This bot already has saved WhatsApp credentials. Check its connection status."
+        "Saved WhatsApp credentials already exist. Check the connection status before requesting another code."
       );
     }
 
@@ -64,101 +95,112 @@ export async function requestLinkBotPairingCode(
       logger: pino({ level: "silent" }),
       printQRInTerminal: false,
       markOnlineOnConnect: false,
+      browser: ["STANY HOSTING", "Chrome", "1.0.0"],
     });
 
     sockets.set(botId, socket);
+    connectionStates.set(botId, false);
 
     socket.ev.on("creds.update", async () => {
       try {
         await saveCreds();
       } catch (error) {
-        console.error("Failed to save WhatsApp credentials:", error);
+        console.error(
+          "[LinkBot] Could not save WhatsApp credentials:",
+          error
+        );
       }
     });
 
     socket.ev.on("connection.update", async (update) => {
-      const { connection, qr, lastDisconnect } = update;
-
-      if (qr && !socket.authState.creds.registered) {
-        try {
-          if (!pairingCodes.has(botId)) {
-            const code = await socket.requestPairingCode(number);
-
-            pairingCodes.set(botId, code);
-
-            await LinkBot.findByIdAndUpdate(botId, {
-              phoneNumber: number,
-              status: "pending",
-              updatedAt: new Date(),
-            });
-          }
-        } catch (error) {
-          console.error("Pairing code generation failed:", error);
-        }
-      }
+      const { connection, lastDisconnect } = update;
 
       if (connection === "open") {
         pairingCodes.delete(botId);
+        connectionStates.set(botId, true);
 
-        await LinkBot.findByIdAndUpdate(botId, {
-          status: "linked",
-          phoneNumber: number,
-          lastSeenAt: new Date(),
-          updatedAt: new Date(),
-        });
+        try {
+          await LinkBot.findByIdAndUpdate(botId, {
+            $set: {
+              phoneNumber: number,
+              status: "linked",
+              lastSeenAt: new Date(),
+              updatedAt: new Date(),
+            },
+          });
+        } catch (error) {
+          console.error(
+            "[LinkBot] Could not save connected status:",
+            error
+          );
+        }
       }
 
       if (connection === "close") {
-        sockets.delete(botId);
         pairingCodes.delete(botId);
+        connectionStates.set(botId, false);
+        sockets.delete(botId);
 
-        const statusCode = (lastDisconnect?.error as any)?.output
-          ?.statusCode;
+        const statusCode = (
+          lastDisconnect?.error as {
+            output?: { statusCode?: number };
+          } | undefined
+        )?.output?.statusCode;
 
-        if (statusCode !== DisconnectReason.loggedOut) {
-          await LinkBot.findByIdAndUpdate(botId, {
-            status: "pending",
-            updatedAt: new Date(),
-          });
-        } else {
-          await LinkBot.findByIdAndUpdate(botId, {
-            status: "paused",
-            updatedAt: new Date(),
-          });
+        const loggedOut =
+          statusCode === DisconnectReason.loggedOut;
+
+        try {
+          await updateBotStatus(
+            botId,
+            loggedOut ? "paused" : "pending"
+          );
+        } catch (error) {
+          console.error(
+            "[LinkBot] Could not save disconnected status:",
+            error
+          );
         }
       }
     });
 
-    const deadline = Date.now() + 30_000;
+    /*
+     * Pairing codes are requested only after the socket has been
+     * created and the authentication state has been initialized.
+     */
+    const pairingCode = await socket.requestPairingCode(number);
 
-    while (Date.now() < deadline) {
-      const code = pairingCodes.get(botId);
+    pairingCodes.set(botId, pairingCode);
 
-      if (code) {
-        return code;
-      }
+    await LinkBot.findByIdAndUpdate(botId, {
+      $set: {
+        phoneNumber: number,
+        status: "pending",
+        updatedAt: new Date(),
+      },
+    });
 
-      if (!sockets.has(botId)) {
-        break;
-      }
+    return pairingCode;
+  } catch (error) {
+    sockets.delete(botId);
+    pairingCodes.delete(botId);
+    connectionStates.delete(botId);
 
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
-
-    throw new Error(
-      "Pairing code was not generated. Please try again."
-    );
+    throw error;
   } finally {
-    connecting.delete(botId);
+    pendingConnections.delete(botId);
   }
 }
 
+/**
+ * Get the current connection status for a bot.
+ */
 export async function getLinkBotRuntimeStatus(botId: string) {
   const bot = await LinkBot.findById(botId).select(
     "status phoneNumber lastSeenAt"
   );
 
-  if (!bot) {
+  if (!bot || bot.status === "deleted") {
     throw new Error("Bot not found.");
   }
 
@@ -170,4 +212,23 @@ export async function getLinkBotRuntimeStatus(botId: string) {
     phoneNumber: bot.phoneNumber || "",
     lastSeenAt: bot.lastSeenAt || null,
   };
+}
+
+/**
+ * Close an active socket when the application needs to stop a bot.
+ */
+export async function stopLinkBot(botId: string): Promise<void> {
+  const socket = sockets.get(botId);
+
+  if (socket) {
+    sockets.delete(botId);
+    pairingCodes.delete(botId);
+    connectionStates.delete(botId);
+
+    try {
+      socket.end(undefined);
+    } catch (error) {
+      console.error("[LinkBot] Error stopping socket:", error);
+    }
+  }
 }

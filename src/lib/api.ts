@@ -1668,4 +1668,165 @@ throw new Error(data.error || "Could not get WhatsApp connection status");
 }
 
 return data as LinkBotConnectionStatus;
-  }
+}
+
+// ============================================================
+// GAMES STORE API
+// ============================================================
+import type { Game, GamePurchaseItem, Movie, MoviePurchaseItem } from "@/types";
+
+export interface GamesResponse {
+  games: Game[];
+  total: number;
+  page: number;
+  pages: number;
+  categories: string[];
+}
+
+export async function getGames(params: {
+  q?: string;
+  category?: string;
+  platform?: string;
+  featured?: boolean;
+  sort?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<GamesResponse> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set("q", params.q);
+  if (params.category) qs.set("category", params.category);
+  if (params.platform) qs.set("platform", params.platform);
+  if (params.featured) qs.set("featured", "true");
+  if (params.sort) qs.set("sort", params.sort);
+  if (params.page) qs.set("page", String(params.page));
+  if (params.limit) qs.set("limit", String(params.limit));
+
+  const res = await fetch(`${API_URL}/games?${qs.toString()}`);
+  return res.json();
+}
+
+export async function getGameBySlug(slug: string): Promise<{ game: Game; related: Game[]; isOwned: boolean }> {
+  const res = await fetchWithAuth(`/games/${encodeURIComponent(slug)}`);
+  return res.json();
+}
+
+export async function purchaseGame(gameId: string) {
+  const res = await fetchWithAuth(`/games/${encodeURIComponent(gameId)}/purchase`, { method: "POST" });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to purchase game");
+  return data;
+}
+
+export async function getMyGamesLibrary(): Promise<{ items: GamePurchaseItem[]; count: number }> {
+  const res = await fetchWithAuth("/games/library/mine");
+  return res.json();
+}
+
+export async function adminGetGames(q = "", category = ""): Promise<{ items: Game[]; count: number }> {
+  const qs = new URLSearchParams();
+  if (q) qs.set("q", q);
+  if (category) qs.set("category", category);
+  const res = await fetchWithAuth(`/games/admin/all?${qs.toString()}`);
+  return res.json();
+}
+
+export async function adminCreateGame(data: Partial<Game>) {
+  const res = await fetchWithAuth("/games/admin", { method: "POST", body: JSON.stringify(data) });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to create game");
+  return out;
+}
+
+export async function adminUpdateGame(id: string, patch: Partial<Game>) {
+  const res = await fetchWithAuth(`/games/admin/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to update game");
+  return out;
+}
+
+export async function adminDeleteGame(id: string) {
+  const res = await fetchWithAuth(`/games/admin/${id}`, { method: "DELETE" });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to delete game");
+  return out;
+}
+
+// ============================================================
+// MOVIES STORE API
+// ============================================================
+export interface MoviesResponse {
+  movies: Movie[];
+  total: number;
+  page: number;
+  pages: number;
+  genres: string[];
+}
+
+export async function getMovies(params: {
+  q?: string;
+  genre?: string;
+  trending?: boolean;
+  featured?: boolean;
+  sort?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<MoviesResponse> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set("q", params.q);
+  if (params.genre) qs.set("genre", params.genre);
+  if (params.trending) qs.set("trending", "true");
+  if (params.featured) qs.set("featured", "true");
+  if (params.sort) qs.set("sort", params.sort);
+  if (params.page) qs.set("page", String(params.page));
+  if (params.limit) qs.set("limit", String(params.limit));
+
+  const res = await fetch(`${API_URL}/movies?${qs.toString()}`);
+  return res.json();
+}
+
+export async function getMovieBySlug(slug: string): Promise<{ movie: Movie; related: Movie[]; isOwned: boolean }> {
+  const res = await fetchWithAuth(`/movies/${encodeURIComponent(slug)}`);
+  return res.json();
+}
+
+export async function purchaseMovie(movieId: string) {
+  const res = await fetchWithAuth(`/movies/${encodeURIComponent(movieId)}/purchase`, { method: "POST" });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to purchase movie");
+  return data;
+}
+
+export async function getMyMoviesLibrary(): Promise<{ items: MoviePurchaseItem[]; count: number }> {
+  const res = await fetchWithAuth("/movies/library/mine");
+  return res.json();
+}
+
+export async function adminGetMovies(q = "", genre = ""): Promise<{ items: Movie[]; count: number }> {
+  const qs = new URLSearchParams();
+  if (q) qs.set("q", q);
+  if (genre) qs.set("genre", genre);
+  const res = await fetchWithAuth(`/movies/admin/all?${qs.toString()}`);
+  return res.json();
+}
+
+export async function adminCreateMovie(data: Partial<Movie>) {
+  const res = await fetchWithAuth("/movies/admin", { method: "POST", body: JSON.stringify(data) });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to create movie");
+  return out;
+}
+
+export async function adminUpdateMovie(id: string, patch: Partial<Movie>) {
+  const res = await fetchWithAuth(`/movies/admin/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to update movie");
+  return out;
+}
+
+export async function adminDeleteMovie(id: string) {
+  const res = await fetchWithAuth(`/movies/admin/${id}`, { method: "DELETE" });
+  const out = await res.json();
+  if (!res.ok) throw new Error(out.error || "Failed to delete movie");
+  return out;
+}
+

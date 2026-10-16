@@ -13,4 +13,8 @@ export { User } from "./User.js";
   export { IPRecord } from "./IPRecord.js";
   export { TrialCheck } from "./TrialCheck.js";
   export { Tutorial } from "./Tutorial.js";
+export { Game } from "./Game.js";
+export { GamePurchase } from "./GamePurchase.js";
+export { Movie } from "./Movie.js";
+export { MoviePurchase } from "./MoviePurchase.js";
   

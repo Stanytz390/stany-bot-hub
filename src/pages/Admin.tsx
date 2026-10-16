@@ -39,6 +39,8 @@ import { AdminBlockedDevices } from "@/components/admin/AdminBlockedDevices";
 import { AdminAppSettings } from "@/components/admin/AdminAppSettings";
 import { AdminRepos } from "@/components/admin/AdminRepos";
 import { AdminTemplateOffers } from "@/components/admin/AdminTemplateOffers";
+import { AdminGames } from "@/components/admin/AdminGames";
+import { AdminMovies } from "@/components/admin/AdminMovies";
 import {
   Users, Bot, Coins, CreditCard, ShoppingBag,
   Ban, CheckCircle, Loader2, RefreshCw, Trash2, ArrowLeft,
@@ -49,6 +51,8 @@ import {
   Youtube, Clock,
   Sparkles,
   Github,
+  Gamepad2,
+  Film,
 } from "lucide-react";
 
 function formatDate(d: string): string {
@@ -57,10 +61,12 @@ function formatDate(d: string): string {
 
 interface AdminPanel { _id: string; planName: string; panelUsername: string; panelLoginUrl: string; purchasedAt: string; ownerEmail: string; ownerUsername: string; txCost: number; }
 
-  type TabKey = "overview" | "users" | "bots" | "transactions" | "coupons" | "referrals" | "config" | "database" | "bot-templates" | "panel-plans" | "panels" | "tutorials" | "ads" | "approvals" | "backups" | "webhooks" | "promos" | "devices" | "settings" | "repos" | "offers" | "notifications";
+  type TabKey = "overview" | "games" | "movies" | "users" | "bots" | "transactions" | "coupons" | "referrals" | "config" | "database" | "bot-templates" | "panel-plans" | "panels" | "tutorials" | "ads" | "approvals" | "backups" | "webhooks" | "promos" | "devices" | "settings" | "repos" | "offers" | "notifications";
 
 const NAV_ITEMS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "overview",       label: "Overview",       icon: <LayoutDashboard className="w-4 h-4" /> },
+  { key: "games",          label: "Games Store",    icon: <Gamepad2 className="w-4 h-4 text-emerald-400" /> },
+  { key: "movies",         label: "Movies Cinema",  icon: <Film className="w-4 h-4 text-emerald-400" /> },
   { key: "users",          label: "Users",          icon: <Users className="w-4 h-4" /> },
   { key: "bots",           label: "Bots",           icon: <Bot className="w-4 h-4" /> },
   { key: "transactions",   label: "Transactions",   icon: <CreditCard className="w-4 h-4" /> },
@@ -1406,6 +1412,19 @@ export function Admin() {
             />
           </div>
         )}
+
+        {activeTab === "games" && <AdminGames />}
+        {activeTab === "movies" && <AdminMovies />}
+        {activeTab === "ads" && <AdminAds />}
+        {activeTab === "approvals" && <AdminManualPayments />}
+        {activeTab === "backups" && <AdminBackups />}
+        {activeTab === "webhooks" && <AdminWebhooks />}
+        {activeTab === "devices" && <AdminBlockedDevices />}
+        {activeTab === "promos" && <AdminPromos />}
+        {activeTab === "offers" && <AdminTemplateOffers />}
+        {activeTab === "repos" && <AdminRepos />}
+        {activeTab === "notifications" && <AdminNotifications />}
+        {activeTab === "settings" && <AdminAppSettings />}
       </main>
 
       <Modal isOpen={userPanelOpen} onClose={closeUserPanel} title={`Manage — ${selectedUser?.username ? `@${selectedUser.username}` : selectedUser?.email ?? ""}`} maxWidth="max-w-md">

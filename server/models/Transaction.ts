@@ -8,7 +8,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   type: { 
     type: String, 
-    enum: ["topup", "deploy", "panel", "renew", "refund", "admin_grant", "transfer_in", "transfer_out", "api_usage", "smm"], 
+    enum: ["topup", "deploy", "panel", "renew", "refund", "admin_grant", "transfer_in", "transfer_out", "api_usage", "smm", "game_purchase", "movie_purchase"], 
     required: true 
   },
   txAmount: { 

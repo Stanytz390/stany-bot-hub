@@ -35,8 +35,8 @@ async function adminAuth(req: AdminRequest, res: Response, next: NextFunction) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "") as { userId: string };
     const user = await User.findById(decoded.userId).lean();
-    if (!user || user.email !== ADMIN_EMAIL) {
-      res.status(403).json({ error: "Forbidden" });
+    if (!user || (user.email !== ADMIN_EMAIL && user.role !== "admin")) {
+      res.status(403).json({ error: "Forbidden: Admin credentials required" });
       return;
     }
     req.user = user as unknown as IUser;

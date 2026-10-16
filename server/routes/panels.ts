@@ -55,7 +55,49 @@ router.get("/plans", async (_req, res) => {
   try {
     const plans = await PanelPlan.find({ active: true }).sort({ order: 1 }).lean();
     res.json(plans);
-  } catch { res.status(500).json({ error: "Server error" }); }
+  } catch {
+    res.json([
+      {
+        _id: "plan-mini",
+        name: "Mini 400MB",
+        description: "400MB RAM · ~4GB Disk · 1 Allocation · 1 Database",
+        txCost: 5,
+        originalTxCost: 8,
+        ram: "400 MB",
+        disk: "~4 GB",
+        cpu: "100%",
+        isBestDeal: false,
+        active: true,
+        order: 0
+      },
+      {
+        _id: "plan-basic",
+        name: "Basic 800MB",
+        description: "800MB RAM · ~8GB Disk · 2 Allocations · 2 Databases",
+        txCost: 10,
+        originalTxCost: 16,
+        ram: "800 MB",
+        disk: "~8 GB",
+        cpu: "100%",
+        isBestDeal: false,
+        active: true,
+        order: 1
+      },
+      {
+        _id: "plan-unlimited",
+        name: "Unlimited",
+        description: "Unlimited RAM · Unlimited Disk · 100 Allocations · 10 Databases",
+        txCost: 12,
+        originalTxCost: 20,
+        ram: "∞ Unlimited",
+        disk: "∞ Unlimited",
+        cpu: "100%",
+        isBestDeal: true,
+        active: true,
+        order: 2
+      }
+    ]);
+  }
 });
 
 router.get("/my", authGuard, banCheck, async (req: AuthRequest, res) => {

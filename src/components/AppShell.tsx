@@ -1,26 +1,23 @@
 import { type ReactNode } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import {
   ArrowLeft,
   LayoutDashboard,
-  Rocket,
-  TrendingUp,
-  Globe,
-  Bot as BotIcon,
+  Gamepad2,
+  Film,
   Coins,
+  Home,
+  Menu,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { AppNavbar } from "./AppNavbar";
 
-/**
- * Android-style app chrome: a compact material top app bar plus a bottom
- * navigation rail. No gold/amber anywhere — the palette stays dark + pink.
- */
 const BOTTOM_NAV = [
-  { label: "Home", icon: LayoutDashboard, path: "/dashboard" },
-  { label: "Boost", icon: TrendingUp, path: "/smm" },
-  { label: "Deploy", icon: Rocket, path: "/services/bots" },
-  { label: "Link Bot", icon: BotIcon, path: "/linkbot" },
-  { label: "Sites", icon: Globe, path: "/hosting" },
+  { label: "Home", icon: Home, path: "/" },
+  { label: "Games", icon: Gamepad2, path: "/games" },
+  { label: "Movies", icon: Film, path: "/movies" },
+  { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+  { label: "Wallet", icon: Coins, path: "/topup" },
 ];
 
 export function AppShell({
@@ -28,64 +25,77 @@ export function AppShell({
   subtitle,
   actions,
   children,
+  showNavbar = true,
 }: {
-  title: string;
+  title?: string;
   subtitle?: string;
   actions?: ReactNode;
   children: ReactNode;
+  showNavbar?: boolean;
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      {/* ===== TOP APP BAR ===== */}
-      <header className="sticky top-0 z-40 bg-[#0f0f16]/95 backdrop-blur-xl border-b border-pink-500/10">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            aria-label="Back"
-            className="p-2 -ml-2 rounded-full text-pink-400 hover:bg-pink-500/10 active:scale-95 transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-base font-semibold truncate">{title}</h1>
-            {subtitle && <p className="text-[11px] text-gray-400 truncate">{subtitle}</p>}
+    <div className="min-h-screen bg-[#07090e] text-zinc-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
+      {/* Top Universal Navbar */}
+      {showNavbar && <AppNavbar />}
+
+      {/* Sub-Header / Page Header if title is provided */}
+      {title && (
+        <div className="bg-[#0b0e15] border-b border-border/60">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                onClick={() => navigate(-1)}
+                aria-label="Back"
+                className="p-1.5 -ml-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 active:scale-95 transition shrink-0"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base font-semibold text-white truncate">{title}</h1>
+                {subtitle && <p className="text-[11px] text-zinc-400 truncate">{subtitle}</p>}
+              </div>
+            </div>
+            {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
           </div>
-          {actions}
-          <button
-            onClick={() => navigate("/topup")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-500/15 border border-pink-500/25 text-pink-300 text-xs font-bold active:scale-95 transition"
-          >
-            <Coins className="w-3.5 h-3.5" />
-            {user?.txCoins ?? 0} SQ
-          </button>
         </div>
-      </header>
+      )}
 
-      <main className="max-w-5xl mx-auto px-4 pt-4 pb-28">{children}</main>
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-12">
+        {children}
+      </main>
 
-      {/* ===== BOTTOM NAVIGATION ===== */}
-      <nav className="fixed bottom-0 inset-x-0 z-40 bg-[#0f0f16]/95 backdrop-blur-xl border-t border-pink-500/10">
-        <div className="max-w-5xl mx-auto grid grid-cols-5">
+      {/* Mobile Bottom Navigation Rail */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#090b10]/95 backdrop-blur-xl border-t border-border/80">
+        <div className="max-w-md mx-auto grid grid-cols-5">
           {BOTTOM_NAV.map((item) => {
-            const active = pathname === item.path || pathname.startsWith(item.path + "/");
+            const active =
+              item.path === "/"
+                ? pathname === "/"
+                : pathname === item.path || pathname.startsWith(item.path + "/");
+            const Icon = item.icon;
             return (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className="py-2.5 flex flex-col items-center gap-1 active:scale-95 transition"
+                className="py-2 flex flex-col items-center justify-center gap-1 active:scale-95 transition"
               >
                 <span
-                  className={`px-4 py-1 rounded-full transition-colors ${
-                    active ? "bg-pink-500/20 text-pink-400" : "text-gray-500"
+                  className={`p-1.5 rounded-xl transition-colors ${
+                    active ? "bg-emerald-500/20 text-emerald-400" : "text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
-                  <item.icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </span>
-                <span className={`text-[10px] font-medium ${active ? "text-pink-400" : "text-gray-500"}`}>
+                <span
+                  className={`text-[10px] font-medium leading-none ${
+                    active ? "text-emerald-400 font-semibold" : "text-zinc-500"
+                  }`}
+                >
                   {item.label}
                 </span>
               </button>
@@ -97,10 +107,12 @@ export function AppShell({
   );
 }
 
-/** Material-ish surface card used across the new pages. */
+/** Polished surface container matching the emerald dark design system */
 export function Surface({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl bg-[#14141d] border border-white/5 shadow-lg shadow-black/30 ${className}`}>
+    <div
+      className={`rounded-2xl bg-[#0d1017] border border-border/80 shadow-xl shadow-black/40 ${className}`}
+    >
       {children}
     </div>
   );

@@ -180,8 +180,6 @@ function cleanErrorMessage(raw: unknown): string {
     clean = "Payment service error. Please try again later.";
   } else if (clean.toLowerCase().includes("insufficient")) {
     clean = "Insufficient funds. Please try again.";
-  } else if (clean.toLowerCase().includes("minimum")) {
-    clean = `Minimum deposit is ${MINIMUM_SQ} SQ (${MINIMUM_TZS.toLocaleString()} TZS).`;
   }
   
   if (clean.length < 3) {

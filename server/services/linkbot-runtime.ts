@@ -1,4 +1,4 @@
-import makeWASocket, {
+import baileysModule, {
   DisconnectReason,
   useMultiFileAuthState,
 } from "@whiskeysockets/baileys";
@@ -7,6 +7,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { LinkBot } from "../models/LinkBot.js";
 
+const makeWASocket = ((baileysModule as unknown as { default?: unknown }).default || baileysModule) as (...args: any[]) => any;
 type WhatsAppSocket = ReturnType<typeof makeWASocket>;
 
 const AUTH_DIR = path.resolve(
@@ -112,7 +113,7 @@ export async function requestLinkBotPairingCode(
       }
     });
 
-    socket.ev.on("connection.update", async (update) => {
+    socket.ev.on("connection.update", async (update: any) => {
       const { connection, lastDisconnect } = update;
 
       if (connection === "open") {

@@ -33,22 +33,73 @@ router.get("/", authGuard, banCheck, async (_req, res) => {
   try {
     const templates = await BotTemplate.find({ active: true }).sort({ isDefault: -1, order: 1, createdAt: 1 }).lean();
     const templateIds = templates.map(t => t._id.toString());
-    const counts = await Bot.aggregate([
-      { $match: { templateId: { $in: templateIds }, status: { $ne: "deleted" } } },
-      { $group: { _id: "$templateId", count: { $sum: 1 } } }
-    ]);
+    let counts: any[] = [];
+    try {
+      counts = await Bot.aggregate([
+        { $match: { templateId: { $in: templateIds }, status: { $ne: "deleted" } } },
+        { $group: { _id: "$templateId", count: { $sum: 1 } } }
+      ]);
+    } catch {}
     const countMap: Record<string, number> = {};
     for (const c of counts) countMap[c._id] = c.count;
     res.json(templates.map(t => ({ ...t, deployCount: countMap[t._id.toString()] || 0 })));
-  } catch { res.status(500).json({ error: "Server error" }); }
+  } catch {
+    res.json([
+      {
+        _id: "default-mdinyane",
+        name: "MdinyaneV2",
+        githubRepo: "Stanytz378/mdinyane",
+        sessionIdUrl: "https://session-id-generator-4xuy.onrender.com/",
+        costTx: 0,
+        isDefault: true,
+        active: true,
+        shareableSlug: "mdinyane-md",
+        imageUrl: "https://url.bmbxmd.workers.dev/utamu.jpeg",
+        deployCount: 0
+      }
+    ]);
+  }
 });
 
 router.get("/slug/:slug", async (req, res) => {
   try {
     const template = await BotTemplate.findOne({ shareableSlug: req.params.slug, active: true }).lean();
-    if (!template) { res.status(404).json({ error: "Bot not found" }); return; }
+    if (!template) {
+      if (req.params.slug === "mdinyane-md") {
+        res.json({
+          _id: "default-mdinyane",
+          name: "MdinyaneV2",
+          githubRepo: "Stanytz378/mdinyane",
+          sessionIdUrl: "https://session-id-generator-4xuy.onrender.com/",
+          costTx: 0,
+          isDefault: true,
+          active: true,
+          shareableSlug: "mdinyane-md",
+          imageUrl: "https://url.bmbxmd.workers.dev/utamu.jpeg"
+        });
+        return;
+      }
+      res.status(404).json({ error: "Bot not found" });
+      return;
+    }
     res.json(template);
-  } catch { res.status(500).json({ error: "Server error" }); }
+  } catch {
+    if (req.params.slug === "mdinyane-md") {
+      res.json({
+        _id: "default-mdinyane",
+        name: "MdinyaneV2",
+        githubRepo: "Stanytz378/mdinyane",
+        sessionIdUrl: "https://session-id-generator-4xuy.onrender.com/",
+        costTx: 0,
+        isDefault: true,
+        active: true,
+        shareableSlug: "mdinyane-md",
+        imageUrl: "https://url.bmbxmd.workers.dev/utamu.jpeg"
+      });
+      return;
+    }
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 const addSchema = z.object({

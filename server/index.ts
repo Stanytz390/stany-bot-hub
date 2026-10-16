@@ -29,6 +29,9 @@ import publicApiRouter from "./routes/public-api.js";
 import smmRouter from "./routes/smm.js";
 import linkBotRouter from "./routes/linkbot.js";
 import websitesRouter from "./routes/websites.js";
+import gamesRouter from "./routes/games.js";
+import moviesRouter from "./routes/movies.js";
+import { seedGamesAndMovies } from "./seed-entertainment.js";
 import { logger } from "./logger.js";
 import { BotTemplate } from "./models/BotTemplate.js";
 import { Bot } from "./models/Bot.js";
@@ -82,6 +85,8 @@ app.use("/api/manual-repos", manualReposRouter);
 app.use("/api/smm", smmRouter);
 app.use("/api/linkbot", linkBotRouter);
 app.use("/api/websites", websitesRouter);
+app.use("/api/games", gamesRouter);
+app.use("/api/movies", moviesRouter);
 
 // ===== OG TAG HANDLER FOR BOT SHARING =====
 const CRAWLER_RE = /whatsapp|facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot|discord|googlebot|bingbot|curl|wget|python-requests/i;
@@ -295,6 +300,7 @@ mongoose
     await fixBotTemplateImages();
     await seedDefaultTemplate();
     await seedPanelPlans();
+    await seedGamesAndMovies();
     app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
     startBot();
   })

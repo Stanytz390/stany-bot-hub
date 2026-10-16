@@ -18,7 +18,7 @@ import {
   LayoutDashboard, BookOpen, UserCircle, CreditCard,
   MessageCircle, ChevronRight, Moon, Sun, Server,
   Youtube, Sparkles, Zap, Rocket, Heart, TrendingUp, Globe, ListOrdered,
-  Activity, ArrowUpRight, Settings, Check
+  Activity, ArrowUpRight, Settings, Check, Gamepad2, Film
 } from "lucide-react";
 import { TechBackground } from "@/components/TechBackground";
 import { AdBanner } from "@/components/AdBanner";
@@ -395,6 +395,8 @@ export function Dashboard() {
 
   const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { label: "Games Store", icon: Gamepad2, path: "/games" },
+    { label: "Movies Cinema", icon: Film, path: "/movies" },
     { label: "Top Up SQ", icon: CreditCard, path: "/topup" },
     { label: "Docs", icon: BookOpen, path: "/docs" },
     { label: "Tutorials", icon: Youtube, path: "/tutorials" },
@@ -407,13 +409,14 @@ export function Dashboard() {
   ];
 
   const quickActions = [
+    { label: "Games Store", icon: Gamepad2, path: "/games", color: "green" },
+    { label: "Movies Cinema", icon: Film, path: "/movies", color: "green" },
     { label: "Deploy Bot", icon: Rocket, path: "/services/bots", color: "pink" },
     { label: "Boost Social", icon: TrendingUp, path: "/smm", color: "pink" },
     { label: "My Link Bot", icon: Bot, path: "/linkbot", color: "purple" },
     { label: "Host Website", icon: Globe, path: "/hosting", color: "blue" },
     { label: "Buy Panel", icon: Server, path: "/services/panels", color: "blue" },
     { label: "Top Up", icon: Coins, path: "/topup", color: "green" },
-    { label: "Community", icon: Users, path: "/community", color: "purple" },
   ];
 
   return (

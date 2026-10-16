@@ -187,4 +187,66 @@ export interface User {
       order: number;
       createdAt: string;
     }
+
+    export interface Game {
+      _id: string;
+      title: string;
+      slug: string;
+      description: string;
+      coverImage: string;
+      bannerImage?: string;
+      screenshots: string[];
+      trailerUrl?: string;
+      category: string;
+      platform: string;
+      priceTZS: number;
+      priceSQ: number;
+      discount: number;
+      rating: number;
+      downloadUrl?: string;
+      externalStoreUrl?: string;
+      isFeatured: boolean;
+      isPublished: boolean;
+      createdAt: string;
+      updatedAt?: string;
+    }
+
+    export interface GamePurchaseItem {
+      purchaseId: string;
+      purchasedAt: string;
+      priceSQ: number;
+      game: Game;
+    }
+
+    export interface Movie {
+      _id: string;
+      title: string;
+      slug: string;
+      synopsis: string;
+      posterImage: string;
+      backdropImage?: string;
+      trailerUrl?: string;
+      genre: string;
+      releaseYear: number;
+      duration: string;
+      rating: number;
+      maturityRating: string;
+      priceTZS: number;
+      priceSQ: number;
+      discount: number;
+      watchUrl?: string;
+      externalWatchUrl?: string;
+      isFeatured: boolean;
+      isTrending: boolean;
+      isPublished: boolean;
+      createdAt: string;
+      updatedAt?: string;
+    }
+
+    export interface MoviePurchaseItem {
+      purchaseId: string;
+      purchasedAt: string;
+      priceSQ: number;
+      movie: Movie;
+    }
   

@@ -96,8 +96,8 @@ export function Login() {
                 className="w-12 h-12 rounded-full object-cover"
               />
             </div>
-            <CardTitle className="text-2xl">Welcome to STANY Host</CardTitle>
-            <CardDescription>Login to manage your bots & panels</CardDescription>
+            <CardTitle className="text-2xl font-display font-extrabold text-white">Stany Host Nexus</CardTitle>
+            <CardDescription className="text-xs text-zinc-400">Sign in to your games, cinema, bots & hosting workspace</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

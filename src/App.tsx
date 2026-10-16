@@ -40,6 +40,10 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from
   import MySmmOrders from "@/pages/MySmmOrders";
   import LinkBotPage from "@/pages/LinkBotPage";
   import WebHosting from "@/pages/WebHosting";
+  import GamesStore from "@/pages/GamesStore";
+  import GameDetail from "@/pages/GameDetail";
+  import MoviesStore from "@/pages/MoviesStore";
+  import MovieDetail from "@/pages/MovieDetail";
   import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
   interface NavLoadingContextType {
@@ -103,7 +107,11 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from
           <Route path="/staff" element={<Staff />} />
           <Route path="/integrations" element={<AgentIntegrations />} />
           <Route path="/api-keys" element={<ApiKeys />} />
-          <Route path="/" element={<RootRedirect />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/games" element={<GamesStore />} />
+          <Route path="/games/:slug" element={<GameDetail />} />
+          <Route path="/movies" element={<MoviesStore />} />
+          <Route path="/movies/:slug" element={<MovieDetail />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/topup" element={<TopUp />} />

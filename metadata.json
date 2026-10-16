@@ -1,0 +1,6 @@
+{
+  "name": "Stany Host Nexus",
+  "description": "Premium digital entertainment, hosting, bots, games & movies platform.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,5 +1,5 @@
 import { MaintenanceGate } from "@/components/MaintenanceGate";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from "react-router";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router";
   import { AuthProvider, useAuth } from "@/hooks/useAuth";
   import { ToastProvider } from "@/hooks/useToast";
   import { I18nProvider } from "@/lib/i18n";
@@ -83,14 +83,6 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from
     const { pathname } = useLocation();
     useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [pathname]);
     return null;
-  }
-
-  function RootRedirect() {
-    const { loading, user } = useAuth();
-    if (loading) return <PageLoader />;
-    // Signed-in users always land straight on their dashboard.
-    if (user) return <Navigate to="/dashboard" replace />;
-    return <Home />;
   }
 
   function AppRoutes() {

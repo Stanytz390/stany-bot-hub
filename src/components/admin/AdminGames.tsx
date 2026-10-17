@@ -14,17 +14,12 @@ import {
   Trash2,
   Edit2,
   Star,
-  Check,
-  X,
-  ExternalLink,
-  Download,
   Eye,
   EyeOff,
-  Sparkles,
 } from "lucide-react";
 
 export function AdminGames() {
-  const { toast } = useToast();
+  const { showToast } = useToast();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -54,21 +49,21 @@ export function AdminGames() {
     isPublished: true,
   });
 
-  useEffect(() => {
-    loadGames();
-  }, [categoryFilter]);
-
   const loadGames = async () => {
     try {
       setLoading(true);
       const res = await adminGetGames(search, categoryFilter);
       setGames(res.items || []);
     } catch {
-      toast("Failed to load games", "error");
+      showToast("Failed to load games", "error");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadGames();
+  }, [categoryFilter]);
 
   const handleOpenAdd = () => {
     setEditingGame(null);
@@ -119,7 +114,7 @@ export function AdminGames() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.description || !formData.coverImage) {
-      toast("Please fill in Title, Description, and Cover Image", "error");
+      showToast("Please fill in Title, Description, and Cover Image", "error");
       return;
     }
 
@@ -127,15 +122,15 @@ export function AdminGames() {
       setSaving(true);
       if (editingGame) {
         await adminUpdateGame(editingGame._id, formData);
-        toast("Game updated successfully", "success");
+        showToast("Game updated successfully", "success");
       } else {
         await adminCreateGame(formData);
-        toast("Game created successfully", "success");
+        showToast("Game created successfully", "success");
       }
       setModalOpen(false);
       loadGames();
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Save failed", "error");
+      showToast(err instanceof Error ? err.message : "Save failed", "error");
     } finally {
       setSaving(false);
     }
@@ -144,10 +139,10 @@ export function AdminGames() {
   const handleTogglePublish = async (game: Game) => {
     try {
       await adminUpdateGame(game._id, { isPublished: !game.isPublished });
-      toast(`Game ${game.isPublished ? "unpublished" : "published"}`, "success");
+      showToast(`Game ${game.isPublished ? "unpublished" : "published"}`, "success");
       loadGames();
     } catch {
-      toast("Failed to update status", "error");
+      showToast("Failed to update status", "error");
     }
   };
 
@@ -155,10 +150,10 @@ export function AdminGames() {
     if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
     try {
       await adminDeleteGame(id);
-      toast("Game deleted successfully", "success");
+      showToast("Game deleted successfully", "success");
       loadGames();
     } catch {
-      toast("Failed to delete game", "error");
+      showToast("Failed to delete game", "error");
     }
   };
 
@@ -198,6 +193,20 @@ export function AdminGames() {
             className="w-full bg-[#0d1017] border border-border/80 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
           />
         </div>
+
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="bg-[#0d1017] border border-border/80 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">All Categories</option>
+          <option value="Action">Action</option>
+          <option value="Adventure">Adventure</option>
+          <option value="RPG">RPG</option>
+          <option value="Strategy">Strategy</option>
+          <option value="Racing">Racing</option>
+          <option value="Sports">Sports</option>
+        </select>
 
         <button
           onClick={loadGames}

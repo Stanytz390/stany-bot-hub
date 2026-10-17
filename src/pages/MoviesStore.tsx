@@ -9,13 +9,9 @@ import {
   Film,
   Search,
   Star,
-  Coins,
   Play,
   CheckCircle,
   Clapperboard,
-  Sparkles,
-  Clock,
-  Calendar,
   Library,
   ArrowRight,
   Tv,
@@ -24,7 +20,7 @@ import {
 export default function MoviesStore() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const { toast } = useToast();
+  const { showToast } = useToast();
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
@@ -38,13 +34,6 @@ export default function MoviesStore() {
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
   const [selectedMovieForPurchase, setSelectedMovieForPurchase] = useState<Movie | null>(null);
 
-  useEffect(() => {
-    loadMovies();
-    if (user) {
-      loadMyLibrary();
-    }
-  }, [activeGenre, sortBy, user]);
-
   const loadMovies = async () => {
     try {
       setLoading(true);
@@ -56,7 +45,7 @@ export default function MoviesStore() {
       setMovies(res.movies || []);
       setGenres(["All", ...(res.genres || [])]);
     } catch {
-      toast("Could not load movies catalog", "error");
+      showToast("Could not load movies catalog", "error");
     } finally {
       setLoading(false);
     }
@@ -71,6 +60,13 @@ export default function MoviesStore() {
     }
   };
 
+  useEffect(() => {
+    loadMovies();
+    if (user) {
+      loadMyLibrary();
+    }
+  }, [activeGenre, sortBy, user]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loadMovies();
@@ -78,7 +74,7 @@ export default function MoviesStore() {
 
   const handlePurchase = async (movie: Movie) => {
     if (!user) {
-      toast("Please sign in to buy movies with your SQ wallet", "info");
+      showToast("Please sign in to buy movies with your SQ wallet", "info");
       navigate("/login");
       return;
     }
@@ -87,7 +83,7 @@ export default function MoviesStore() {
     const finalPrice = Math.max(0, Math.round(movie.priceSQ * (1 - discount / 100)));
 
     if (user.txCoins < finalPrice) {
-      toast(
+      showToast(
         `Insufficient balance. You need ${finalPrice} SQ (Available: ${user.txCoins} SQ).`,
         "error"
       );
@@ -98,11 +94,11 @@ export default function MoviesStore() {
     try {
       setPurchasingId(movie._id);
       const res = await purchaseMovie(movie._id);
-      toast(res.message || `Unlocked "${movie.title}" successfully!`, "success");
+      showToast(res.message || `Unlocked "${movie.title}" successfully!`, "success");
       setSelectedMovieForPurchase(null);
       await Promise.all([loadMyLibrary(), refreshUser?.()]);
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Purchase failed", "error");
+      showToast(err instanceof Error ? err.message : "Purchase failed", "error");
     } finally {
       setPurchasingId(null);
     }

@@ -16,12 +16,10 @@ import {
   Star,
   Eye,
   EyeOff,
-  Tv,
-  Clapperboard,
 } from "lucide-react";
 
 export function AdminMovies() {
-  const { toast } = useToast();
+  const { showToast } = useToast();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -54,21 +52,21 @@ export function AdminMovies() {
     isPublished: true,
   });
 
-  useEffect(() => {
-    loadMovies();
-  }, [genreFilter]);
-
   const loadMovies = async () => {
     try {
       setLoading(true);
       const res = await adminGetMovies(search, genreFilter);
       setMovies(res.items || []);
     } catch {
-      toast("Failed to load movies", "error");
+      showToast("Failed to load movies", "error");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadMovies();
+  }, [genreFilter]);
 
   const handleOpenAdd = () => {
     setEditingMovie(null);
@@ -125,7 +123,7 @@ export function AdminMovies() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.synopsis || !formData.posterImage) {
-      toast("Please fill in Title, Synopsis, and Poster Image", "error");
+      showToast("Please fill in Title, Synopsis, and Poster Image", "error");
       return;
     }
 
@@ -133,15 +131,15 @@ export function AdminMovies() {
       setSaving(true);
       if (editingMovie) {
         await adminUpdateMovie(editingMovie._id, formData);
-        toast("Movie updated successfully", "success");
+        showToast("Movie updated successfully", "success");
       } else {
         await adminCreateMovie(formData);
-        toast("Movie created successfully", "success");
+        showToast("Movie created successfully", "success");
       }
       setModalOpen(false);
       loadMovies();
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Save failed", "error");
+      showToast(err instanceof Error ? err.message : "Save failed", "error");
     } finally {
       setSaving(false);
     }
@@ -150,10 +148,10 @@ export function AdminMovies() {
   const handleTogglePublish = async (movie: Movie) => {
     try {
       await adminUpdateMovie(movie._id, { isPublished: !movie.isPublished });
-      toast(`Movie ${movie.isPublished ? "unpublished" : "published"}`, "success");
+      showToast(`Movie ${movie.isPublished ? "unpublished" : "published"}`, "success");
       loadMovies();
     } catch {
-      toast("Failed to update status", "error");
+      showToast("Failed to update status", "error");
     }
   };
 
@@ -161,10 +159,10 @@ export function AdminMovies() {
     if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
     try {
       await adminDeleteMovie(id);
-      toast("Movie deleted successfully", "success");
+      showToast("Movie deleted successfully", "success");
       loadMovies();
     } catch {
-      toast("Failed to delete movie", "error");
+      showToast("Failed to delete movie", "error");
     }
   };
 
@@ -203,6 +201,20 @@ export function AdminMovies() {
             className="w-full bg-[#0d1017] border border-border/80 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
           />
         </div>
+
+        <select
+          value={genreFilter}
+          onChange={(e) => setGenreFilter(e.target.value)}
+          className="bg-[#0d1017] border border-border/80 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+        >
+          <option value="">All Genres</option>
+          <option value="Action">Action</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Drama">Drama</option>
+          <option value="Thriller">Thriller</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Horror">Horror</option>
+        </select>
 
         <button
           onClick={loadMovies}

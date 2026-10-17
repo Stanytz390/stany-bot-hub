@@ -6,25 +6,19 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import type { Game } from "@/types";
 import {
-  Gamepad2,
   Star,
-  Coins,
   Download,
   ExternalLink,
   Play,
   CheckCircle,
-  Share2,
-  ArrowLeft,
   ShoppingBag,
-  Sparkles,
-  Info,
 } from "lucide-react";
 
 export default function GameDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const { toast } = useToast();
+  const { showToast } = useToast();
 
   const [game, setGame] = useState<Game | null>(null);
   const [related, setRelated] = useState<Game[]>([]);
@@ -33,12 +27,6 @@ export default function GameDetail() {
   const [purchasing, setPurchasing] = useState(false);
   const [activeMediaTab, setActiveMediaTab] = useState<"trailer" | "screenshots">("trailer");
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (slug) {
-      loadGame(slug);
-    }
-  }, [slug]);
 
   const loadGame = async (gameSlug: string) => {
     try {
@@ -51,17 +39,23 @@ export default function GameDetail() {
         setSelectedScreenshot(res.game.screenshots[0]);
       }
     } catch {
-      toast("Could not find the requested game", "error");
+      showToast("Could not find the requested game", "error");
       navigate("/games");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (slug) {
+      loadGame(slug);
+    }
+  }, [slug]);
+
   const handlePurchase = async () => {
     if (!game) return;
     if (!user) {
-      toast("Please sign in to buy games with your SQ coins", "info");
+      showToast("Please sign in to buy games with your SQ coins", "info");
       navigate("/login");
       return;
     }
@@ -70,7 +64,7 @@ export default function GameDetail() {
     const finalPrice = Math.max(0, Math.round(game.priceSQ * (1 - discount / 100)));
 
     if (user.txCoins < finalPrice) {
-      toast(
+      showToast(
         `Insufficient balance. You need ${finalPrice} SQ (Available: ${user.txCoins} SQ).`,
         "error"
       );
@@ -81,11 +75,11 @@ export default function GameDetail() {
     try {
       setPurchasing(true);
       const res = await purchaseGame(game._id);
-      toast(res.message || "Game successfully unlocked!", "success");
+      showToast(res.message || "Game successfully unlocked!", "success");
       setIsOwned(true);
       await refreshUser?.();
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Purchase failed", "error");
+      showToast(err instanceof Error ? err.message : "Purchase failed", "error");
     } finally {
       setPurchasing(false);
     }

@@ -9,7 +9,6 @@ import {
   Film,
   Server,
   Bot,
-  Coins,
   Search,
   Sparkles,
   ArrowRight,
@@ -17,13 +16,7 @@ import {
   CheckCircle,
   Play,
   TrendingUp,
-  Cpu,
-  Layers,
-  ShoppingBag,
-  ExternalLink,
   ChevronRight,
-  Shield,
-  Zap,
 } from "lucide-react";
 
 export default function Home() {
@@ -209,7 +202,18 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {games.slice(0, 4).map((game) => {
+          {loading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="rounded-2xl bg-[#0d1017] border border-border/80 overflow-hidden animate-pulse">
+                <div className="aspect-[3/4] bg-zinc-900" />
+                <div className="p-4 space-y-2">
+                  <div className="h-4 bg-zinc-800 rounded w-3/4" />
+                  <div className="h-3 bg-zinc-800 rounded w-1/2" />
+                </div>
+              </div>
+            ))
+          ) : (
+            games.slice(0, 4).map((game) => {
             const discount = game.discount || 0;
             const finalSQ = Math.max(0, Math.round(game.priceSQ * (1 - discount / 100)));
             return (
@@ -262,7 +266,7 @@ export default function Home() {
                 </div>
               </div>
             );
-          })}
+          }))}
         </div>
       </section>
 
@@ -385,7 +389,11 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>From 5 SQ (~5,000 TZS) / month</span>
+                  <span>
+                    {panelPlans.length > 0
+                      ? `From ${panelPlans[0].txCost} SQ (~${(panelPlans[0].txCost * 1000).toLocaleString()} TZS) / month`
+                      : "From 5 SQ (~5,000 TZS) / month"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -406,8 +414,11 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-bold text-white mb-2">WhatsApp Bots & Automation</h3>
               <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                Deploy ready-to-run WhatsApp automation bots (MdinyaneV2, SubZero, Queen Anita) with
-                one click. Pair with QR or phone code.
+                Deploy ready-to-run WhatsApp automation bots (
+                {botTemplates.length > 0
+                  ? botTemplates.map((b) => b.name).join(", ")
+                  : "MdinyaneV2, SubZero, Queen Anita"}
+                ) with one click. Pair with QR or phone code.
               </p>
               <div className="space-y-1.5 text-xs text-zinc-300 mb-6">
                 <div className="flex items-center gap-2">

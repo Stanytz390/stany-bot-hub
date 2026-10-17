@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useNavigate, useLocation, Link } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import {
   ArrowLeft,
   LayoutDashboard,
@@ -7,9 +7,7 @@ import {
   Film,
   Coins,
   Home,
-  Menu,
 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 import { AppNavbar } from "./AppNavbar";
 
 const BOTTOM_NAV = [
@@ -35,7 +33,6 @@ export function AppShell({
 }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#07090e] text-zinc-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">

@@ -6,16 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import type { Movie } from "@/types";
 import {
-  Film,
   Star,
-  Coins,
   Play,
   CheckCircle,
-  Clock,
-  Calendar,
-  Share2,
   Tv,
-  ArrowLeft,
   ShoppingBag,
   ExternalLink,
 } from "lucide-react";
@@ -24,7 +18,7 @@ export default function MovieDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const { toast } = useToast();
+  const { showToast } = useToast();
 
   const [movie, setMovie] = useState<Movie | null>(null);
   const [related, setRelated] = useState<Movie[]>([]);
@@ -32,12 +26,6 @@ export default function MovieDetail() {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [isPlayingStream, setIsPlayingStream] = useState(false);
-
-  useEffect(() => {
-    if (slug) {
-      loadMovie(slug);
-    }
-  }, [slug]);
 
   const loadMovie = async (movieSlug: string) => {
     try {
@@ -47,17 +35,23 @@ export default function MovieDetail() {
       setRelated(res.related || []);
       setIsOwned(res.isOwned || false);
     } catch {
-      toast("Could not find requested film", "error");
+      showToast("Could not find requested film", "error");
       navigate("/movies");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (slug) {
+      loadMovie(slug);
+    }
+  }, [slug]);
+
   const handlePurchase = async () => {
     if (!movie) return;
     if (!user) {
-      toast("Please sign in to buy movies with your SQ wallet", "info");
+      showToast("Please sign in to buy movies with your SQ wallet", "info");
       navigate("/login");
       return;
     }
@@ -66,7 +60,7 @@ export default function MovieDetail() {
     const finalPrice = Math.max(0, Math.round(movie.priceSQ * (1 - discount / 100)));
 
     if (user.txCoins < finalPrice) {
-      toast(
+      showToast(
         `Insufficient balance. You need ${finalPrice} SQ (Available: ${user.txCoins} SQ).`,
         "error"
       );
@@ -77,11 +71,11 @@ export default function MovieDetail() {
     try {
       setPurchasing(true);
       const res = await purchaseMovie(movie._id);
-      toast(res.message || "Film unlocked successfully!", "success");
+      showToast(res.message || "Film unlocked successfully!", "success");
       setIsOwned(true);
       await refreshUser?.();
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Purchase failed", "error");
+      showToast(err instanceof Error ? err.message : "Purchase failed", "error");
     } finally {
       setPurchasing(false);
     }

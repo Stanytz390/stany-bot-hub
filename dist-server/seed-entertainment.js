@@ -1,0 +1,168 @@
+import { Game } from "./models/Game.js";
+import { Movie } from "./models/Movie.js";
+import { logger } from "./logger.js";
+export async function seedGamesAndMovies() {
+    try {
+        const gameCount = await Game.countDocuments();
+        if (gameCount === 0) {
+            await Game.insertMany([
+                {
+                    title: "Cyber Odyssey: Neo-Kyoto",
+                    slug: "cyber-odyssey-neo-kyoto",
+                    description: "An immersive action RPG set in a rain-slicked cyberpunk metropolis. Master neural cyberware, customize modular plasma weaponry, and uncover corporate conspiracies threatening humanity's consciousness.",
+                    coverImage: "/src/assets/images/game_cyber_odyssey_1792182322460.jpg",
+                    bannerImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    screenshots: [
+                        "/src/assets/images/game_cyber_odyssey_1792182322460.jpg",
+                        "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    ],
+                    trailerUrl: "https://www.youtube.com/watch?v=qIcTM8WXFjk",
+                    category: "Action RPG",
+                    platform: "PC / Android",
+                    priceTZS: 25000,
+                    priceSQ: 15,
+                    discount: 20,
+                    rating: 4.9,
+                    downloadUrl: "https://nexus.stanyhost.com/builds/cyber-odyssey-v1.zip",
+                    externalStoreUrl: "https://store.steampowered.com",
+                    isFeatured: true,
+                    isPublished: true,
+                },
+                {
+                    title: "Runelords of Shadow: Rise of the Drake",
+                    slug: "runelords-of-shadow-rise-of-the-drake",
+                    description: "Defy towering mythic colossi in this dark fantasy souls-like masterpiece. Wield emerald-infused runic greatswords, explore forgotten ruins, and confront the ancient Dread Drake of Aethelgard.",
+                    coverImage: "/src/assets/images/game_shadowblade_chronicles_1792182322512.jpg",
+                    bannerImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    screenshots: [
+                        "/src/assets/images/game_shadowblade_chronicles_1792182322512.jpg",
+                    ],
+                    trailerUrl: "https://www.youtube.com/watch?v=E3Huy2cdih0",
+                    category: "Dark Fantasy",
+                    platform: "PC Windows / PS5",
+                    priceTZS: 35000,
+                    priceSQ: 22,
+                    discount: 15,
+                    rating: 4.8,
+                    downloadUrl: "",
+                    externalStoreUrl: "https://store.playstation.com",
+                    isFeatured: true,
+                    isPublished: true,
+                },
+                {
+                    title: "Stellar Horizon: Fleet Commander",
+                    slug: "stellar-horizon-fleet-commander",
+                    description: "Command deep space dreadnought fleets, manage hyperspace orbital stations, and battle rival factions in a tactical galaxy-scale grand strategy simulation.",
+                    coverImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    bannerImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    screenshots: [
+                        "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    ],
+                    trailerUrl: "https://www.youtube.com/watch?v=1rPxiXXxftE",
+                    category: "Strategy",
+                    platform: "PC / Android",
+                    priceTZS: 18000,
+                    priceSQ: 10,
+                    discount: 0,
+                    rating: 4.7,
+                    downloadUrl: "https://nexus.stanyhost.com/builds/stellar-fleet-installer.exe",
+                    externalStoreUrl: "",
+                    isFeatured: false,
+                    isPublished: true,
+                },
+                {
+                    title: "Speedshift: Tokyo Driftway",
+                    slug: "speedshift-tokyo-driftway",
+                    description: "Underground street racing through neon highway expressways. Realistic drift physics, extensive turbo tuning, and high-octane multiplayer showdowns.",
+                    coverImage: "/src/assets/images/game_cyber_odyssey_1792182322460.jpg",
+                    bannerImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    screenshots: [],
+                    trailerUrl: "https://www.youtube.com/watch?v=2SABoY8Kk7o",
+                    category: "Racing",
+                    platform: "Android / iOS",
+                    priceTZS: 12000,
+                    priceSQ: 8,
+                    discount: 30,
+                    rating: 4.6,
+                    downloadUrl: "https://nexus.stanyhost.com/builds/speedshift-mobile.apk",
+                    externalStoreUrl: "",
+                    isFeatured: false,
+                    isPublished: true,
+                },
+            ]);
+            logger.info("Seeded initial Games store catalog");
+        }
+        const movieCount = await Movie.countDocuments();
+        if (movieCount === 0) {
+            await Movie.insertMany([
+                {
+                    title: "Neon Horizon: Beyond the Known",
+                    slug: "neon-horizon-beyond-the-known",
+                    synopsis: "When an astronaut crew ventures toward an anomalous emerald cosmic rift on the rim of the universe, they uncover celestial coordinates left by an ancient precursor civilization.",
+                    posterImage: "/src/assets/images/movie_neon_horizon_1792182321522.jpg",
+                    backdropImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    trailerUrl: "https://www.youtube.com/watch?v=YoHD9XEInc0",
+                    genre: "Sci-Fi, Cosmic Mystery, Thriller",
+                    releaseYear: 2025,
+                    duration: "2h 24m",
+                    rating: 9.1,
+                    maturityRating: "PG-13",
+                    priceTZS: 15000,
+                    priceSQ: 10,
+                    discount: 10,
+                    watchUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    externalWatchUrl: "https://www.youtube.com",
+                    isFeatured: true,
+                    isTrending: true,
+                    isPublished: true,
+                },
+                {
+                    title: "The Kigali Protocol: Zero Hour",
+                    slug: "the-kigali-protocol-zero-hour",
+                    synopsis: "A high-stakes African cyber-espionage thriller. An elite team of digital security analysts race across East Africa to dismantle an autonomous surveillance exploit before it triggers a continental power grid shutdown.",
+                    posterImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    backdropImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    trailerUrl: "https://www.youtube.com/watch?v=8hP9D6kZseM",
+                    genre: "Action, Cyber Thriller",
+                    releaseYear: 2024,
+                    duration: "1h 56m",
+                    rating: 8.7,
+                    maturityRating: "16+",
+                    priceTZS: 12000,
+                    priceSQ: 8,
+                    discount: 25,
+                    watchUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    externalWatchUrl: "",
+                    isFeatured: true,
+                    isTrending: true,
+                    isPublished: true,
+                },
+                {
+                    title: "Rift Walker: Origins",
+                    slug: "rift-walker-origins",
+                    synopsis: "In an alternate Victorian era fueled by aether crystals, a renegade inventor discovers a pocket dimension connecting parallel timelines, unlocking impossible technologies with deadly consequences.",
+                    posterImage: "/src/assets/images/game_shadowblade_chronicles_1792182322512.jpg",
+                    backdropImage: "/src/assets/images/hero_nexus_cinematic_1792182319804.jpg",
+                    trailerUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    genre: "Adventure, Fantasy",
+                    releaseYear: 2025,
+                    duration: "2h 08m",
+                    rating: 8.4,
+                    maturityRating: "PG-13",
+                    priceTZS: 10000,
+                    priceSQ: 7,
+                    discount: 0,
+                    watchUrl: "",
+                    externalWatchUrl: "https://www.imdb.com",
+                    isFeatured: false,
+                    isTrending: true,
+                    isPublished: true,
+                },
+            ]);
+            logger.info("Seeded initial Movies cinema catalog");
+        }
+    }
+    catch (err) {
+        logger.warn({ err }, "Entertainment catalog seeding notice");
+    }
+}

@@ -15,7 +15,6 @@ import {
   LogOut,
   Layers,
   ChevronDown,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
 

@@ -124,10 +124,29 @@ app.get(["/services/bots/:slug", "/services/bots/:slug/*"], async (req, res, nex
   } catch { next(); }
 });
 
-// ===== STATIC FILES =====
+// Database offline fallback error handler
+app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const error = err as { name?: string; message?: string };
+  if (
+    error?.name === "MongooseError" ||
+    error?.name === "MongoNetworkError" ||
+    (typeof error?.message === "string" && error.message.includes("buffering timed out"))
+  ) {
+    logger.warn("[AI Studio] Database offline - returning graceful response");
+    if (req.method === "GET") {
+      return res.json(req.path.endsWith("s") || req.path.endsWith("s/") ? [] : {});
+    }
+    return res.status(503).json({ error: "Service temporarily unavailable (database offline)" });
+  }
+  next(err);
+});
+
+// ===== STATIC FILES (Production Only) =====
 const distPath = path.join(__dirname, "../dist");
-app.use(express.static(distPath));
-app.get(/.*/, (_req, res) => { res.sendFile(path.join(distPath, "index.html")); });
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(distPath));
+  app.get(/.*/, (_req, res) => { res.sendFile(path.join(distPath, "index.html")); });
+}
 
 // ===== DATABASE MAINTENANCE =====
 async function dropStaleIndexes() {
@@ -290,9 +309,15 @@ async function fixBotTemplateImages() {
 }
 
 // ===== START SERVER =====
-mongoose
-  .connect(MONGO_URI)
-  .then(async () => {
+mongoose.set("bufferCommands", false);
+
+export async function startServer() {
+  if (!MONGO_URI) {
+    logger.warn("No MONGODB_URI provided — server running without database connection");
+    return;
+  }
+  try {
+    await mongoose.connect(MONGO_URI);
     logger.info("MongoDB connected");
     await dropStaleIndexes();
     await deduplicatePanelPlans();
@@ -301,10 +326,23 @@ mongoose
     await seedDefaultTemplate();
     await seedPanelPlans();
     await seedGamesAndMovies();
-    app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
     startBot();
-  })
-  .catch(err => {
-    logger.error({ err }, "MongoDB connection failed");
-    process.exit(1);
+  } catch (err) {
+    logger.warn({ err }, "MongoDB connection failed — continuing without database");
+  }
+}
+
+export { app };
+
+const isDirectRun = process.argv[1] && (
+  process.argv[1].endsWith("/server/index.ts") ||
+  process.argv[1].endsWith("/dist-server/index.js") ||
+  process.argv[1].endsWith("\\server\\index.ts") ||
+  process.argv[1].endsWith("\\dist-server\\index.js")
+);
+
+if (isDirectRun) {
+  startServer().then(() => {
+    app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
   });
+}

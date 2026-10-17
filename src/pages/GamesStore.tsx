@@ -9,23 +9,20 @@ import {
   Gamepad2,
   Search,
   Star,
-  Coins,
   Download,
   ExternalLink,
   Sparkles,
   ShoppingBag,
-  Filter,
   CheckCircle,
   Play,
   Library,
-  Layers,
   ArrowRight,
 } from "lucide-react";
 
 export default function GamesStore() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
-  const { toast } = useToast();
+  const { showToast } = useToast();
 
   const [games, setGames] = useState<Game[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -40,13 +37,6 @@ export default function GamesStore() {
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
   const [selectedGameForPurchase, setSelectedGameForPurchase] = useState<Game | null>(null);
 
-  useEffect(() => {
-    loadGames();
-    if (user) {
-      loadMyLibrary();
-    }
-  }, [activeCategory, activePlatform, sortBy, user]);
-
   const loadGames = async () => {
     try {
       setLoading(true);
@@ -59,7 +49,7 @@ export default function GamesStore() {
       setGames(res.games || []);
       setCategories(["All", ...(res.categories || [])]);
     } catch {
-      toast("Could not load games catalog", "error");
+      showToast("Could not load games catalog", "error");
     } finally {
       setLoading(false);
     }
@@ -74,6 +64,13 @@ export default function GamesStore() {
     }
   };
 
+  useEffect(() => {
+    loadGames();
+    if (user) {
+      loadMyLibrary();
+    }
+  }, [activeCategory, activePlatform, sortBy, user]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loadGames();
@@ -81,7 +78,7 @@ export default function GamesStore() {
 
   const handlePurchase = async (game: Game) => {
     if (!user) {
-      toast("Please sign in to purchase games with your SQ wallet", "info");
+      showToast("Please sign in to purchase games with your SQ wallet", "info");
       navigate("/login");
       return;
     }
@@ -90,7 +87,7 @@ export default function GamesStore() {
     const finalPrice = Math.max(0, Math.round(game.priceSQ * (1 - discount / 100)));
 
     if (user.txCoins < finalPrice) {
-      toast(
+      showToast(
         `Insufficient balance. You need ${finalPrice} SQ (Available: ${user.txCoins} SQ).`,
         "error"
       );
@@ -101,11 +98,11 @@ export default function GamesStore() {
     try {
       setPurchasingId(game._id);
       const res = await purchaseGame(game._id);
-      toast(res.message || `Purchased ${game.title} successfully!`, "success");
+      showToast(res.message || `Purchased ${game.title} successfully!`, "success");
       setSelectedGameForPurchase(null);
       await Promise.all([loadMyLibrary(), refreshUser?.()]);
     } catch (err: unknown) {
-      toast(err instanceof Error ? err.message : "Purchase failed", "error");
+      showToast(err instanceof Error ? err.message : "Purchase failed", "error");
     } finally {
       setPurchasingId(null);
     }
@@ -314,7 +311,7 @@ export default function GamesStore() {
                         </div>
                         <h3 className="font-semibold text-white text-base truncate">{game.title}</h3>
                         <p className="text-[11px] text-zinc-500 mt-1">
-                          Acquired {new Date(purchasedAt).toLocaleDateString()}
+                          Acquired {new Date(purchasedAt).toLocaleDateString()} · {priceSQ} SQ
                         </p>
                       </div>
 

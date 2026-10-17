@@ -537,17 +537,8 @@ interface I18nValue {
 
 const I18nContext = createContext<I18nValue>({ lang: "en", setLang: () => {}, t: (k) => k });
 
-/** Picks the best supported language from the browser, defaulting to English. */
+/** Picks the best supported language, defaulting to English. */
 export function detectBrowserLang(): Lang {
-  if (typeof navigator === "undefined") return "en";
-  const candidates = [navigator.language, ...(navigator.languages || [])].filter(Boolean);
-  for (const raw of candidates) {
-    const code = String(raw).toLowerCase().split("-")[0];
-    if (code === "sw") return "sw";
-    if (code === "fr") return "fr";
-    if (code === "ha") return "ha";
-    if (code === "en") return "en";
-  }
   return "en";
 }
 
@@ -555,7 +546,7 @@ function initialLang(): Lang {
   if (typeof window === "undefined") return "en";
   const saved = localStorage.getItem("lang") as Lang | null;
   if (saved && DICTS[saved]) return saved;
-  return detectBrowserLang();
+  return "en";
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {

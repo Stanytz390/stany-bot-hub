@@ -31,7 +31,8 @@ export function AdminManualPayments() {
     setLoading(true);
     adminManualPayments(s).then((d) => Array.isArray(d) && setRows(d)).catch(() => {}).finally(() => setLoading(false));
   };
-  useEffect(() => { load(status); setSelected([]); /* eslint-disable-next-line */ }, [status]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { load(status); setSelected([]); }, [status]);
 
   const toggleOne = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   const allSelected = rows.length > 0 && selected.length === rows.length;

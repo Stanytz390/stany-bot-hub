@@ -148,7 +148,7 @@ router.get("/trial-check/:phone", async (req, res) => {
       res.json({ status: "trial_ended" }); return;
     }
 
-    let trialBot = await Bot.findOne({ phoneNumber: phone, isTrial: true });
+    const trialBot = await Bot.findOne({ phoneNumber: phone, isTrial: true });
 
     if (trialBot) {
       const expired = new Date(trialBot.expiresAt) < new Date() || ["expired", "deleted"].includes(trialBot.status);

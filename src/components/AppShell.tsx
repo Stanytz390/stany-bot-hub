@@ -35,24 +35,24 @@ export function AppShell({
   const { pathname } = useLocation();
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-zinc-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="min-h-screen bg-[#121212] text-zinc-100 flex flex-col selection:bg-[#1ed760]/30 selection:text-[#1ed760] overflow-x-hidden">
       {/* Top Universal Navbar */}
       {showNavbar && <AppNavbar />}
 
       {/* Sub-Header / Page Header if title is provided */}
       {title && (
-        <div className="bg-[#0b0e15] border-b border-border/60">
+        <div className="bg-[#181818] border-b border-[#282828]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 onClick={() => navigate(-1)}
                 aria-label="Back"
-                className="p-1.5 -ml-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 active:scale-95 transition shrink-0"
+                className="p-1.5 -ml-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 active:scale-95 transition shrink-0"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
               <div className="min-w-0">
-                <h1 className="text-sm sm:text-base font-semibold text-white truncate">{title}</h1>
+                <h1 className="text-sm sm:text-base font-bold text-white truncate">{title}</h1>
                 {subtitle && <p className="text-[11px] text-zinc-400 truncate">{subtitle}</p>}
               </div>
             </div>
@@ -62,13 +62,13 @@ export function AppShell({
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 py-6 pb-28 md:pb-12">
         {children}
       </main>
 
-      {/* Mobile Bottom Navigation Rail */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#090b10]/95 backdrop-blur-xl border-t border-border/80">
-        <div className="max-w-md mx-auto grid grid-cols-5">
+      {/* Mobile Bottom Navigation Rail (Spotify UI style) */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#121212]/95 backdrop-blur-xl border-t border-[#282828]">
+        <div className="max-w-md mx-auto grid grid-cols-5 px-1 py-1">
           {BOTTOM_NAV.map((item) => {
             const active =
               item.path === "/"
@@ -79,18 +79,18 @@ export function AppShell({
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className="py-2 flex flex-col items-center justify-center gap-1 active:scale-95 transition"
+                className="py-1.5 flex flex-col items-center justify-center gap-1 active:scale-90 transition-transform"
               >
                 <span
-                  className={`p-1.5 rounded-xl transition-colors ${
-                    active ? "bg-emerald-500/20 text-emerald-400" : "text-zinc-500 hover:text-zinc-300"
+                  className={`p-1 rounded-full transition-colors ${
+                    active ? "text-[#1ed760]" : "text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-5 h-5" />
                 </span>
                 <span
                   className={`text-[10px] font-medium leading-none ${
-                    active ? "text-emerald-400 font-semibold" : "text-zinc-500"
+                    active ? "text-white font-bold" : "text-zinc-500"
                   }`}
                 >
                   {item.label}

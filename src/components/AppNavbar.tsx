@@ -33,6 +33,7 @@ export function AppNavbar() {
     { label: "Hosting", path: "/hosting", icon: Server },
     { label: "Bots", path: "/services/bots", icon: Bot },
     { label: "SMM", path: "/smm", icon: TrendingUp },
+    { label: "API & Docs", path: "/docs", icon: Shield },
   ];
 
   const handleLogout = async () => {
@@ -42,22 +43,30 @@ export function AppNavbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#090b10]/95 backdrop-blur-md border-b border-border/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
-        {/* Zone 1: Brand Wordmark */}
+    <header className="sticky top-0 z-50 bg-[#121212]/95 backdrop-blur-md border-b border-[#282828]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        {/* Zone 1: Brand Wordmark with user's official avatar */}
         <Link to="/" className="flex items-center gap-2.5 whitespace-nowrap shrink-0 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <span className="font-display font-extrabold text-black text-lg">N</span>
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#1ed760]/40 shadow-lg shadow-[#1ed760]/20 group-hover:scale-105 transition-transform bg-black flex items-center justify-center">
+            <img
+              src="https://url.bmbxmd.workers.dev/2AFIV.jpg"
+              alt="Stany Nexus Logo"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLElement).style.display = "none";
+              }}
+            />
           </div>
           <div className="flex flex-col">
-            <span className="font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors">
-              STANY <span className="text-emerald-400">NEXUS</span>
+            <span className="font-display font-bold text-sm sm:text-base tracking-tight text-white group-hover:text-[#1ed760] transition-colors">
+              STANY <span className="text-[#1ed760]">NEXUS</span>
             </span>
+            <span className="text-[10px] text-zinc-400 font-mono -mt-0.5 hidden sm:inline">1 SQ = 100 TSh</span>
           </div>
         </Link>
 
-        {/* Zone 2: Navigation Links (Single-line, 4-5 items) */}
-        <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
+        {/* Zone 2: Navigation Links (Spotify dark style) */}
+        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5">
           {navLinks.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             const Icon = link.icon;
@@ -65,13 +74,13 @@ export function AppNavbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                   isActive
-                    ? "text-emerald-400 bg-emerald-500/10 font-semibold"
-                    : "text-zinc-300 hover:text-white hover:bg-zinc-800/50"
+                    ? "text-black bg-[#1ed760] shadow-sm"
+                    : "text-zinc-300 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-emerald-400" : "text-zinc-400"}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-black" : "text-zinc-400"}`} />
                 {link.label}
               </Link>
             );
@@ -208,10 +217,16 @@ export function AppNavbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Spotify Dark Aesthetics) */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#0d1017] border-b border-border/80 px-4 pt-2 pb-5 space-y-3">
-          <div className="grid grid-cols-2 gap-2 pt-2">
+        <div className="md:hidden bg-[#181818] border-b border-[#282828] px-4 pt-3 pb-6 space-y-4 animate-in slide-in-from-top-2">
+          {/* Rate Notice on Mobile */}
+          <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#121212] border border-[#282828] text-xs">
+            <span className="text-zinc-400">Exchange Rate:</span>
+            <span className="font-bold text-[#1ed760] font-mono">1 SQ = 100 TSh</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = location.pathname.startsWith(link.path);
@@ -220,48 +235,87 @@ export function AppNavbar() {
                   key={link.path}
                   to={link.path}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium ${
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition ${
                     isActive
-                      ? "bg-emerald-500/15 text-emerald-400 font-semibold"
-                      : "bg-zinc-900/60 text-zinc-300 hover:text-white"
+                      ? "bg-[#1ed760] text-black font-bold shadow-md shadow-[#1ed760]/20"
+                      : "bg-[#121212] text-zinc-200 hover:text-white hover:bg-[#242424] border border-[#282828]"
                   }`}
                 >
-                  <Icon className="w-4 h-4 text-emerald-400" />
+                  <Icon className={`w-4 h-4 ${isActive ? "text-black" : "text-[#1ed760]"}`} />
                   {link.label}
                 </Link>
               );
             })}
           </div>
 
-          <div className="border-t border-border/60 pt-3 flex flex-col gap-2">
-            <Link
-              to="/dashboard"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-300 bg-zinc-900/50"
-            >
-              <Layers className="w-4 h-4 text-emerald-400" />
-              User Dashboard
-            </Link>
-            <Link
-              to="/topup"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20"
-            >
-              <div className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-emerald-400" />
-                <span>SQ Wallet</span>
+          <div className="border-t border-[#282828] pt-3 flex flex-col gap-2">
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium text-white bg-[#121212] border border-[#282828]"
+                >
+                  <Layers className="w-4 h-4 text-[#1ed760]" />
+                  Dashboard
+                </Link>
+                <Link
+                  to="/topup"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold text-[#1ed760] bg-[#1ed760]/10 border border-[#1ed760]/30"
+                >
+                  <div className="flex items-center gap-2">
+                    <Coins className="w-4 h-4 text-[#1ed760]" />
+                    <span>SQ Wallet (Top Up)</span>
+                  </div>
+                  <span className="font-bold tabular-nums font-mono">{user?.txCoins ?? 0} SQ</span>
+                </Link>
+                <Link
+                  to="/api-keys"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium text-zinc-300 bg-[#121212] border border-[#282828]"
+                >
+                  <Shield className="w-4 h-4 text-[#1ed760]" />
+                  Developer API Keys
+                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold text-[#1ed760] bg-[#121212] border border-[#1ed760]/40"
+                  >
+                    <Shield className="w-4 h-4" />
+                    Admin Console
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-rose-400 hover:bg-rose-500/10 text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-2.5 text-center text-xs font-semibold text-white bg-[#121212] border border-[#282828] rounded-lg"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-2.5 text-center text-xs font-bold text-black bg-[#1ed760] rounded-lg shadow-md shadow-[#1ed760]/20"
+                >
+                  Get Started
+                </Link>
               </div>
-              <span className="font-bold tabular-nums">{user?.txCoins ?? 0} SQ</span>
-            </Link>
-            {isAdmin && (
-              <Link
-                to="/admin"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-emerald-400 bg-zinc-900/50"
-              >
-                <Shield className="w-4 h-4" />
-                Admin Console
-              </Link>
             )}
           </div>
         </div>

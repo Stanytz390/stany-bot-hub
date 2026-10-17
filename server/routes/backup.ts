@@ -141,8 +141,7 @@ router.post("/:id/restore", adminAuth, async (req, res) => {
       const ops = docs.map((doc) => ({
         replaceOne: { filter: { _id: doc._id }, replacement: doc, upsert: true },
       }));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await col.bulkWrite(ops as any, { ordered: false }).catch(() => null);
+      await col.bulkWrite(ops as unknown as Parameters<typeof col.bulkWrite>[0], { ordered: false }).catch(() => null);
       restored.push({ name, count: docs.length });
     }
     res.json({ ok: true, restored });

@@ -6,23 +6,28 @@ import { StrictMode, Component } from "react";
   import { HelmetProvider } from "react-helmet-async";
 
   const ACCENT_HSL: Record<string, string> = {
-    blue:   "210 88% 62%",
-    teal:   "172 76% 50%",
-    gold:   "44 82% 58%",
-    violet: "262 83% 58%",
-    red:    "0 72% 51%",
-    green:  "142 71% 45%",
-    orange: "25 95% 53%",
+    spotify: "141 73% 45%",
+    green:   "141 73% 45%",
+    emerald: "158 84% 42%",
+    blue:    "210 88% 62%",
+    teal:    "172 76% 50%",
+    gold:    "44 82% 58%",
+    violet:  "262 83% 58%",
+    red:     "0 72% 51%",
+    orange:  "25 95% 53%",
   };
 
   (function initThemeAndAccent() {
     const theme = localStorage.getItem("theme") || "dark";
     document.documentElement.classList.add(theme);
 
-    let accent = localStorage.getItem("accent") || "blue";
-    // One-time migration to the new eye-friendly azure theme.
-    if (!localStorage.getItem("accent_v3")) { accent = "blue"; localStorage.setItem("accent", "blue"); localStorage.setItem("accent_v3", "1"); }
-    const hsl = ACCENT_HSL[accent] || ACCENT_HSL["blue"];
+    // Spotify emerald green is default
+    let accent = localStorage.getItem("accent") || "spotify";
+    if (localStorage.getItem("accent") === "blue") {
+      accent = "spotify";
+      localStorage.setItem("accent", "spotify");
+    }
+    const hsl = ACCENT_HSL[accent] || ACCENT_HSL["spotify"];
     const style = document.createElement("style");
     style.id = "__accent_override__";
     style.textContent = `:root, .dark { --primary: ${hsl}; --ring: ${hsl}; }`;
